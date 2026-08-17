@@ -1,0 +1,24 @@
+package com.example.lihascalculator.ui.calculator
+
+import androidx.compose.runtime.Immutable
+import com.example.lihascalculator.domain.engine.NumberFormatter
+
+@Immutable
+data class CalculatorState(
+    val expression: String = "0",
+    val displayExpression: String = "0",
+    val result: String = "",
+    val previewResult: String? = null,
+    val isError: Boolean = false,
+    val errorMessage: String? = null,
+    val isCalculated: Boolean = false,
+    val openParenthesesCount: Int = 0
+) {
+    companion object {
+        fun initial(): CalculatorState = CalculatorState(
+            expression = "0",
+            displayExpression = "0"
+        )
+    }
+}
+

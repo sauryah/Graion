@@ -1,0 +1,293 @@
+package com.example.lihascalculator.ui.components
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.example.lihascalculator.domain.model.CalculatorAction
+import com.example.lihascalculator.domain.model.CalculatorOperator
+
+@Composable
+fun CalculatorKeypad(
+    modifier: Modifier = Modifier,
+    hapticsEnabled: Boolean = true,
+    soundEnabled: Boolean = false,
+    onAction: (CalculatorAction) -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        // Row 1: AC | ( ) | % | ÷
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            CalculatorButton(
+                symbol = "AC",
+                type = CalculatorButtonType.FUNCTION,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "All Clear",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Clear) }
+            )
+            CalculatorButton(
+                symbol = "( )",
+                type = CalculatorButtonType.FUNCTION,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Parentheses",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Parentheses) }
+            )
+            CalculatorButton(
+                symbol = "%",
+                type = CalculatorButtonType.FUNCTION,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Percentage",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Percentage) }
+            )
+            CalculatorButton(
+                symbol = "÷",
+                type = CalculatorButtonType.OPERATOR,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Divide",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Operator(CalculatorOperator.DIVIDE)) }
+            )
+        }
+
+        // Row 2: 7 | 8 | 9 | ×
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            CalculatorButton(
+                symbol = "7",
+                type = CalculatorButtonType.NUMBER,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Seven",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Number(7)) }
+            )
+            CalculatorButton(
+                symbol = "8",
+                type = CalculatorButtonType.NUMBER,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Eight",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Number(8)) }
+            )
+            CalculatorButton(
+                symbol = "9",
+                type = CalculatorButtonType.NUMBER,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Nine",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Number(9)) }
+            )
+            CalculatorButton(
+                symbol = "×",
+                type = CalculatorButtonType.OPERATOR,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Multiply",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Operator(CalculatorOperator.MULTIPLY)) }
+            )
+        }
+
+        // Row 3: 4 | 5 | 6 | −
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            CalculatorButton(
+                symbol = "4",
+                type = CalculatorButtonType.NUMBER,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Four",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Number(4)) }
+            )
+            CalculatorButton(
+                symbol = "5",
+                type = CalculatorButtonType.NUMBER,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Five",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Number(5)) }
+            )
+            CalculatorButton(
+                symbol = "6",
+                type = CalculatorButtonType.NUMBER,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Six",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Number(6)) }
+            )
+            CalculatorButton(
+                symbol = "−",
+                type = CalculatorButtonType.OPERATOR,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Subtract",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Operator(CalculatorOperator.SUBTRACT)) }
+            )
+        }
+
+        // Row 4: 1 | 2 | 3 | +
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            CalculatorButton(
+                symbol = "1",
+                type = CalculatorButtonType.NUMBER,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "One",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Number(1)) }
+            )
+            CalculatorButton(
+                symbol = "2",
+                type = CalculatorButtonType.NUMBER,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Two",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Number(2)) }
+            )
+            CalculatorButton(
+                symbol = "3",
+                type = CalculatorButtonType.NUMBER,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Three",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Number(3)) }
+            )
+            CalculatorButton(
+                symbol = "+",
+                type = CalculatorButtonType.OPERATOR,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Add",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Operator(CalculatorOperator.ADD)) }
+            )
+        }
+
+        // Row 5: +/- | 0 | . | =
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            CalculatorButton(
+                symbol = "+/-",
+                type = CalculatorButtonType.FUNCTION,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Toggle Sign",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.ToggleSign) }
+            )
+            CalculatorButton(
+                symbol = "0",
+                type = CalculatorButtonType.NUMBER,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Zero",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Number(0)) }
+            )
+            CalculatorButton(
+                symbol = ".",
+                type = CalculatorButtonType.NUMBER,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Decimal Point",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Decimal) }
+            )
+            CalculatorButton(
+                symbol = "=",
+                type = CalculatorButtonType.EQUALS,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Equals",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Calculate) }
+            )
+        }
+    }
+}
