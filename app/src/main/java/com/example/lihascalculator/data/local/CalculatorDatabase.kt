@@ -6,13 +6,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [CalculationEntity::class],
-    version = 1,
+    entities = [CalculationEntity::class, WireDrawScheduleEntity::class],
+    version = 2,
     exportSchema = false
 )
 abstract class CalculatorDatabase : RoomDatabase() {
 
     abstract fun calculationDao(): CalculationDao
+    abstract fun wireDrawScheduleDao(): WireDrawScheduleDao
 
     companion object {
         @Volatile

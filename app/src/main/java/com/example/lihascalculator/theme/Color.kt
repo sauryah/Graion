@@ -65,7 +65,8 @@ data class CalculatorColors(
     val textSecondary: Color,
     val textPreview: Color,
     val error: Color,
-    val isDark: Boolean
+    val isDark: Boolean,
+    val accentPrimary: Color = PrimaryViolet
 )
 
 val LocalCalculatorColors = staticCompositionLocalOf {

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,6 +40,7 @@ fun CalculatorScreen(
     state: CalculatorState,
     preferences: UserPreferences,
     onAction: (CalculatorAction) -> Unit,
+    onNavigateToTools: () -> Unit,
     onNavigateToHistory: () -> Unit,
     onNavigateToSettings: () -> Unit,
     modifier: Modifier = Modifier
@@ -59,6 +61,16 @@ fun CalculatorScreen(
                     )
                 },
                 actions = {
+                    IconButton(
+                        onClick = onNavigateToTools,
+                        modifier = Modifier.semantics { contentDescription = "Open Engineering Tools" }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Build,
+                            contentDescription = "Tools",
+                            tint = colors.textSecondary
+                        )
+                    }
                     IconButton(
                         onClick = onNavigateToHistory,
                         modifier = Modifier.semantics { contentDescription = "Open Calculation History" }
