@@ -12,7 +12,7 @@ android {
     namespace = "com.example.lihascalculator"
     compileSdk = 36
     defaultConfig {
-        applicationId = "com.sauryah.lical"
+        applicationId = "com.sauryah.lihas.calculator"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
