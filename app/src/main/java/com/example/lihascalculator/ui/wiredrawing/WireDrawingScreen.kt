@@ -104,7 +104,7 @@ fun WireDrawingScreen(
                         enabled = state.canUndo
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Undo,
+                            imageVector = Icons.AutoMirrored.Filled.Undo,
                             contentDescription = "Undo",
                             tint = if (state.canUndo) colors.textPrimary else colors.textSecondary.copy(alpha = 0.3f),
                             modifier = Modifier.size(20.dp)
@@ -117,7 +117,7 @@ fun WireDrawingScreen(
                         enabled = state.canRedo
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Redo,
+                            imageVector = Icons.AutoMirrored.Filled.Redo,
                             contentDescription = "Redo",
                             tint = if (state.canRedo) colors.textPrimary else colors.textSecondary.copy(alpha = 0.3f),
                             modifier = Modifier.size(20.dp)

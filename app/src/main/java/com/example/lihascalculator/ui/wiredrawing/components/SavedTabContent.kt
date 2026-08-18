@@ -32,6 +32,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,10 +44,13 @@ import androidx.compose.ui.unit.sp
 import com.example.lihascalculator.domain.engine.wiredrawing.WireDrawingExportHelper
 import com.example.lihascalculator.domain.model.wiredrawing.SavedSchedule
 import com.example.lihascalculator.theme.CalculatorColors
+import com.example.lihascalculator.ui.util.ShareHelper
 import com.example.lihascalculator.ui.wiredrawing.WireDrawingState
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+private val SavedScheduleDateFormatter = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
 
 fun LazyListScope.savedTabContent(
     state: WireDrawingState,
@@ -205,7 +209,7 @@ fun LazyListScope.savedTabContent(
                         onClick = {
                             if (state.isValidSchedule) {
                                 val csv = WireDrawingExportHelper.generateCsv(state.passes, state.stats)
-                                WireDrawingExportHelper.shareContent(
+                                ShareHelper.shareContent(
                                     context = context,
                                     title = "Export Schedule (CSV)",
                                     content = csv,
@@ -226,7 +230,7 @@ fun LazyListScope.savedTabContent(
                         onClick = {
                             if (state.isValidSchedule) {
                                 val report = WireDrawingExportHelper.generateTextReport(state.passes, state.stats)
-                                WireDrawingExportHelper.shareContent(
+                                ShareHelper.shareContent(
                                     context = context,
                                     title = "Export Engineering Report",
                                     content = report,
@@ -255,7 +259,9 @@ private fun SavedScheduleItemCard(
     onOpen: () -> Unit,
     onDelete: () -> Unit
 ) {
-    val dateFormatter = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
+    val formattedDate = remember(schedule.timestamp) {
+        SavedScheduleDateFormatter.format(Date(schedule.timestamp))
+    }
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -285,7 +291,7 @@ private fun SavedScheduleItemCard(
                     color = colors.accentPrimary
                 )
                 Text(
-                    text = dateFormatter.format(Date(schedule.timestamp)),
+                    text = formattedDate,
                     fontSize = 10.sp,
                     color = colors.textSecondary
                 )

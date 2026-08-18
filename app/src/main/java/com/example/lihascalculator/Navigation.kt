@@ -2,10 +2,10 @@ package com.example.lihascalculator
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -27,14 +27,14 @@ fun MainNavigation(
 ) {
     val context = LocalContext.current
     val backStack = rememberNavBackStack(CalculatorRoute)
-    val state by viewModel.uiState.collectAsState()
-    val preferences by viewModel.userPreferences.collectAsState()
-    val historyList by viewModel.history.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val preferences by viewModel.userPreferences.collectAsStateWithLifecycle()
+    val historyList by viewModel.history.collectAsStateWithLifecycle()
 
     val wireDrawingViewModel: WireDrawingViewModel = viewModel(
-        factory = WireDrawingViewModelFactory(context)
+        factory = WireDrawingViewModelFactory(context.applicationContext)
     )
-    val wireDrawingState by wireDrawingViewModel.uiState.collectAsState()
+    val wireDrawingState by wireDrawingViewModel.uiState.collectAsStateWithLifecycle()
 
     NavDisplay(
         backStack = backStack,

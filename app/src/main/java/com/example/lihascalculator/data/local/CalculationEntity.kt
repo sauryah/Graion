@@ -1,10 +1,14 @@
 package com.example.lihascalculator.data.local
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.lihascalculator.domain.model.CalculationRecord
 
-@Entity(tableName = "calculations")
+@Entity(
+    tableName = "calculations",
+    indices = [Index(value = ["timestamp"])]
+)
 data class CalculationEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,

@@ -1,9 +1,7 @@
 package com.example.lihascalculator.domain.model.wiredrawing
 
-import androidx.compose.runtime.Immutable
 import kotlinx.serialization.Serializable
 
-@Immutable
 @Serializable
 data class PassResult(
     val passNumber: Int,
@@ -16,7 +14,6 @@ data class PassResult(
     val reductionRatio: Double
 )
 
-@Immutable
 @Serializable
 data class WireDrawingStats(
     val totalPasses: Int,
@@ -39,7 +36,6 @@ enum class QualityRating(val title: String, val stars: Int) {
     NOT_APPLICABLE("N/A", 0)
 }
 
-@Immutable
 @Serializable
 data class ConsistencyResult(
     val avgElongation: Double,
@@ -48,7 +44,6 @@ data class ConsistencyResult(
     val stars: Int
 )
 
-@Immutable
 @Serializable
 data class SuggestedIntermediatePass(
     val passIndex: Int,
@@ -58,7 +53,6 @@ data class SuggestedIntermediatePass(
     val proposedDies: List<Double> // Includes fromDie, intermediate dies, toDie
 )
 
-@Immutable
 @Serializable
 data class TargetCheckResult(
     val passNumber: Int,
@@ -70,7 +64,6 @@ data class TargetCheckResult(
     val isOutOfRange: Boolean
 )
 
-@Immutable
 @Serializable
 data class SavedSchedule(
     val id: Long = 0,
@@ -79,7 +72,6 @@ data class SavedSchedule(
     val timestamp: Long = System.currentTimeMillis()
 )
 
-@Immutable
 @Serializable
 data class CadDieSpec(
     val dieType: String = "ROUND",

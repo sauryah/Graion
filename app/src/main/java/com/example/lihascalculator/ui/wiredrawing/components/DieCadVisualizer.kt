@@ -25,10 +25,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -127,7 +133,14 @@ fun DieCadVisualizer(
                     val wireColor = Color(0xFFF59E0B)
                     val casingBorderColor = Color(0xFF64748B)
 
-                    Canvas(modifier = Modifier.fillMaxWidth().height(200.dp)) {
+                    Canvas(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .semantics {
+                                contentDescription = "Die blueprint cross-section for pass #${pass.passNumber}, inlet ${pass.fromDie} mm, outlet ${pass.toDie} mm"
+                            }
+                    ) {
                         val w = size.width
                         val h = size.height
                         val midY = h / 2f

@@ -1,10 +1,14 @@
 package com.example.lihascalculator.data.local
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.example.lihascalculator.domain.model.wiredrawing.SavedSchedule
 
-@Entity(tableName = "wire_draw_schedules")
+@Entity(
+    tableName = "wire_draw_schedules",
+    indices = [Index(value = ["timestamp"])]
+)
 data class WireDrawScheduleEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
