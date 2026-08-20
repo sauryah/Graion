@@ -1,11 +1,11 @@
-# Privacy Policy for Lical
+# Privacy Policy for Graion
 
 **Effective Date:** August 18, 2026
 
-Lical ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains our data practices regarding the Lical mobile application ("the App").
+Graion ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains our data practices regarding the Graion mobile application ("the App").
 
 ### 1. Information Collection and Use
-Lical is designed as a 100% offline utility and engineering calculator.
+Graion is designed as a 100% offline utility and engineering calculator.
 
 - **No Personal Information Collected:** We do not collect, transmit, store, or share any personal identifiable information (PII) such as names, email addresses, phone numbers, location data, or device identifiers.
 - **No Analytics or Tracking:** We do not use third-party tracking, telemetry, crash-reporting SDKs, or analytics services.

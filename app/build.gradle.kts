@@ -12,7 +12,7 @@ android {
     namespace = "com.sauryah.graion"
     compileSdk = 36
     defaultConfig {
-        applicationId = "com.sauryah.lihas.calculator"
+        applicationId = "com.sauryah.graion"
         minSdk = 26
         targetSdk = 36
         versionCode = 3
