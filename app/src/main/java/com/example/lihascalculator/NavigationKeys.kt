@@ -17,3 +17,6 @@ data object ToolsRoute : NavKey
 
 @Serializable
 data object WireDrawingRoute : NavKey
+
+@Serializable
+data object UnitConverterRoute : NavKey

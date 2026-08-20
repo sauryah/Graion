@@ -20,6 +20,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Architecture
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Straighten
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -54,6 +55,7 @@ data class EngineeringToolItem(
 @Composable
 fun ToolsLandingScreen(
     onNavigateToWireDrawing: () -> Unit,
+    onNavigateToUnitConverter: () -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -67,6 +69,14 @@ fun ToolsLandingScreen(
             description = "Calculate wire-drawing geometry pass-by-pass from a sequence of die diameters with CAD cross-sections, series generation, and consistency analytics.",
             icon = Icons.Default.Architecture,
             onOpen = onNavigateToWireDrawing
+        ),
+        EngineeringToolItem(
+            id = "unit-converter",
+            title = "Unit Converter",
+            category = "GENERAL",
+            description = "Convert between length, mass, area, volume, temperature, and speed units instantly.",
+            icon = Icons.Default.Straighten,
+            onOpen = onNavigateToUnitConverter
         )
     )
 

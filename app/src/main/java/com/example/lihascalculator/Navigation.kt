@@ -16,6 +16,7 @@ import com.sauryah.lihas.calculator.ui.calculator.CalculatorViewModel
 import com.sauryah.lihas.calculator.ui.history.HistoryScreen
 import com.sauryah.lihas.calculator.ui.settings.SettingsScreen
 import com.sauryah.lihas.calculator.ui.tools.ToolsLandingScreen
+import com.sauryah.lihas.calculator.ui.unitconverter.UnitConverterScreen
 import com.sauryah.lihas.calculator.ui.wiredrawing.WireDrawingScreen
 import com.sauryah.lihas.calculator.ui.wiredrawing.WireDrawingViewModel
 import com.sauryah.lihas.calculator.ui.wiredrawing.WireDrawingViewModelFactory
@@ -55,6 +56,13 @@ fun MainNavigation(
             entry<ToolsRoute> {
                 ToolsLandingScreen(
                     onNavigateToWireDrawing = { backStack.add(WireDrawingRoute) },
+                    onNavigateToUnitConverter = { backStack.add(UnitConverterRoute) },
+                    onBackClick = { backStack.removeLastOrNull() }
+                )
+            }
+
+            entry<UnitConverterRoute> {
+                UnitConverterScreen(
                     onBackClick = { backStack.removeLastOrNull() }
                 )
             }
