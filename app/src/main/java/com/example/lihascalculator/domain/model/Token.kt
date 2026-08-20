@@ -8,7 +8,9 @@ enum class TokenType {
     MINUS,
     MULTIPLY,
     DIVIDE,
+    POWER,
     PERCENT,
+    SQRT,
     LEFT_PAREN,
     RIGHT_PAREN,
     UNARY_MINUS

@@ -6,6 +6,7 @@ import com.sauryah.lihas.calculator.domain.engine.CalculatorEngine
 import com.sauryah.lihas.calculator.domain.engine.NumberFormatter
 import com.sauryah.lihas.calculator.domain.model.CalculationRecord
 import com.sauryah.lihas.calculator.domain.model.CalculatorAction
+import com.sauryah.lihas.calculator.domain.model.CalculatorConstant
 import com.sauryah.lihas.calculator.domain.model.EvaluationResult
 import com.sauryah.lihas.calculator.domain.model.ThemeMode
 import com.sauryah.lihas.calculator.domain.model.UserPreferences
@@ -54,6 +55,8 @@ class CalculatorViewModel(
             is CalculatorAction.Parentheses -> handleParentheses()
             is CalculatorAction.Percentage -> handlePercentage()
             is CalculatorAction.ToggleSign -> handleToggleSign()
+            is CalculatorAction.Constant -> handleConstant(action.constant)
+            is CalculatorAction.SquareRoot -> handleSquareRoot()
             is CalculatorAction.MemoryAdd -> handleMemoryAdd()
             is CalculatorAction.MemorySubtract -> handleMemorySubtract()
             is CalculatorAction.MemoryRecall -> handleMemoryRecall()
@@ -342,6 +345,48 @@ class CalculatorViewModel(
         }
     }
 
+    private fun handleConstant(constant: CalculatorConstant) {
+        _uiState.update { current ->
+            val symbol = constant.symbol
+            val expr = if (current.isCalculated || current.isError || current.expression == "0") {
+                symbol
+            } else {
+                current.expression + symbol
+            }
+            val preview = evaluateLivePreview(expr)
+            current.copy(
+                expression = expr,
+                displayExpression = NumberFormatter.formatDisplayExpression(expr),
+                previewResult = preview,
+                isError = false,
+                errorMessage = null,
+                isCalculated = false
+            )
+        }
+    }
+
+    private fun handleSquareRoot() {
+        _uiState.update { current ->
+            val expr = if (current.isCalculated && current.result.isNotEmpty()) current.result else current.expression
+            val lastChar = expr.lastOrNull()
+
+            if (lastChar != null && (lastChar.isDigit() || lastChar == ')' || lastChar == '%')) {
+                val newExpr = "$expr√"
+                val preview = evaluateLivePreview(newExpr)
+                current.copy(
+                    expression = newExpr,
+                    displayExpression = NumberFormatter.formatDisplayExpression(newExpr),
+                    previewResult = preview,
+                    isError = false,
+                    errorMessage = null,
+                    isCalculated = false
+                )
+            } else {
+                current
+            }
+        }
+    }
+
     private fun handleMemoryAdd() {
         _uiState.update { current ->
             val value = currentNumericValue(current) ?: return@update current
@@ -433,7 +478,7 @@ class CalculatorViewModel(
     }
 
     private fun isEndingWithOperator(expr: String): Boolean {
-        return expr.endsWith("+") || expr.endsWith("-") || expr.endsWith("*") || expr.endsWith("/")
+        return expr.endsWith("+") || expr.endsWith("-") || expr.endsWith("*") || expr.endsWith("/") || expr.endsWith("^")
     }
 
     private fun saveCalculationToHistory(expression: String, result: String) {

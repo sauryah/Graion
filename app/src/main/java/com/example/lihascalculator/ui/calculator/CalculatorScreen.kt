@@ -123,16 +123,16 @@ fun CalculatorScreen(
                 state = state,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(0.9f),
+                    .weight(0.7f),
                 onDeleteClick = { onAction(CalculatorAction.Delete) },
                 onClearAllClick = { onAction(CalculatorAction.Clear) }
             )
 
-            // Calculator Keypad (5 Rows)
+            // Calculator Keypad (7 Rows)
             CalculatorKeypad(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1.35f),
+                    .weight(1.5f),
                 hapticsEnabled = preferences.hapticsEnabled,
                 soundEnabled = preferences.soundEnabled,
                 onAction = onAction

@@ -95,6 +95,9 @@ class CalculatorEngine(
                     }
                     currentValue.divide(divisor, mathContext)
                 }
+                CalculatorOperator.POWER -> {
+                    power(currentValue, operand) ?: return EvaluationResult.Error.MalformedExpression
+                }
             }
             EvaluationResult.Success(
                 value = result,
@@ -109,6 +112,29 @@ class CalculatorEngine(
 
     private fun percentOf(value: BigDecimal, percent: BigDecimal): BigDecimal {
         return value.multiply(percent, mathContext).divide(BigDecimal("100"), mathContext)
+    }
+
+    private fun power(base: BigDecimal, exponent: BigDecimal): BigDecimal? {
+        return try {
+            val isIntegerExponent = exponent.stripTrailingZeros().scale() <= 0
+            val intExponent = exponent.toInt()
+            if (isIntegerExponent && intExponent in -1000..1000) {
+                when {
+                    intExponent == 0 -> BigDecimal.ONE
+                    intExponent > 0 -> base.pow(intExponent, mathContext)
+                    else -> BigDecimal.ONE.divide(base.pow(-intExponent, mathContext), mathContext)
+                }
+            } else {
+                val result = Math.pow(base.toDouble(), exponent.toDouble())
+                if (result.isNaN() || result.isInfinite()) {
+                    null
+                } else {
+                    BigDecimal.valueOf(result)
+                }
+            }
+        } catch (e: Exception) {
+            null
+        }
     }
 
     /**
@@ -189,6 +215,22 @@ class CalculatorEngine(
                     val top = stack.pop()
                     val percentVal = top.value.divide(BigDecimal("100"), mathContext)
                     stack.push(StackValue(percentVal, fromPercent = true))
+                }
+
+                TokenType.SQRT -> {
+                    if (stack.isEmpty()) return EvaluationResult.Error.MalformedExpression
+                    val top = stack.pop()
+                    if (top.value.signum() < 0) return EvaluationResult.Error.MalformedExpression
+                    val sqrtVal = BigDecimal.valueOf(kotlin.math.sqrt(top.value.toDouble()))
+                    stack.push(StackValue(sqrtVal, fromPercent = false))
+                }
+
+                TokenType.POWER -> {
+                    if (stack.size < 2) return EvaluationResult.Error.MalformedExpression
+                    val b = stack.pop()
+                    val a = stack.pop()
+                    val result = power(a.value, b.value) ?: return EvaluationResult.Error.MalformedExpression
+                    stack.push(StackValue(result, fromPercent = false))
                 }
 
                 TokenType.UNARY_MINUS -> {

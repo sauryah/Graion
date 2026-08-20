@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sauryah.lihas.calculator.domain.model.CalculatorAction
+import com.sauryah.lihas.calculator.domain.model.CalculatorConstant
 import com.sauryah.lihas.calculator.domain.model.CalculatorOperator
 
 @Composable
@@ -25,6 +26,59 @@ fun CalculatorKeypad(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
+        // Row -1: π | e | ^ | √
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            CalculatorButton(
+                symbol = "π",
+                type = CalculatorButtonType.FUNCTION,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Pi",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Constant(CalculatorConstant.PI)) }
+            )
+            CalculatorButton(
+                symbol = "e",
+                type = CalculatorButtonType.FUNCTION,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Euler's number",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Constant(CalculatorConstant.EULER)) }
+            )
+            CalculatorButton(
+                symbol = "^",
+                type = CalculatorButtonType.OPERATOR,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Power",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.Operator(CalculatorOperator.POWER)) }
+            )
+            CalculatorButton(
+                symbol = "√",
+                type = CalculatorButtonType.FUNCTION,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Square Root",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.SquareRoot) }
+            )
+        }
+
         // Row 0: MC | MR | M- | M+
         Row(
             modifier = Modifier

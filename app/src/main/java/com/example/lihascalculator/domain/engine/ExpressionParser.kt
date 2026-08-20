@@ -29,8 +29,14 @@ class ExpressionParser {
                     output.add(token)
                 }
 
+                TokenType.SQRT -> {
+                    // Postfix unary operator - outputs directly after operand: 9√ -> sqrt(9)
+                    output.add(token)
+                }
+
                 TokenType.UNARY_MINUS -> {
-                    // Unary prefix operator: right-associative
+                    // Unary prefix operator: right-associative. Binds tighter than power (Excel-style),
+                    // so -2^2 = (-2)^2 = 4 and 2^-3 = 0.125 both work.
                     while (operatorStack.isNotEmpty()) {
                         val top = operatorStack.peek() ?: break
                         if (top.type != TokenType.LEFT_PAREN &&
@@ -44,7 +50,7 @@ class ExpressionParser {
                     operatorStack.push(token)
                 }
 
-                TokenType.PLUS, TokenType.MINUS, TokenType.MULTIPLY, TokenType.DIVIDE -> {
+                TokenType.PLUS, TokenType.MINUS, TokenType.MULTIPLY, TokenType.DIVIDE, TokenType.POWER -> {
                     // Binary operators: left-associative
                     while (operatorStack.isNotEmpty()) {
                         val top = operatorStack.peek() ?: break
@@ -93,8 +99,10 @@ class ExpressionParser {
 
     private fun precedence(type: TokenType): Int {
         return when (type) {
+            TokenType.SQRT -> 6
+            TokenType.POWER -> 5
             TokenType.PERCENT -> 4
-            TokenType.UNARY_MINUS -> 3
+            TokenType.UNARY_MINUS -> 6
             TokenType.MULTIPLY, TokenType.DIVIDE -> 2
             TokenType.PLUS, TokenType.MINUS -> 1
             else -> 0
@@ -104,6 +112,7 @@ class ExpressionParser {
     private fun isLeftAssociative(type: TokenType): Boolean {
         return when (type) {
             TokenType.UNARY_MINUS -> false
+            TokenType.POWER -> false
             else -> true
         }
     }

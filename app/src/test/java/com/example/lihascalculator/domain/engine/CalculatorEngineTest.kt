@@ -239,6 +239,74 @@ class CalculatorEngineTest {
     }
 
     @Test
+    fun testPower() {
+        val result1 = engine.evaluate("2^10")
+        assertTrue(result1 is EvaluationResult.Success)
+        assertEquals("1024", (result1 as EvaluationResult.Success).formatted)
+
+        val result2 = engine.evaluate("2^3^2")
+        assertTrue(result2 is EvaluationResult.Success)
+        assertEquals("512", (result2 as EvaluationResult.Success).formatted)
+
+        val result3 = engine.evaluate("2^-3")
+        assertTrue(result3 is EvaluationResult.Success)
+        assertEquals("0.125", (result3 as EvaluationResult.Success).formatted)
+
+        val result4 = engine.evaluate("2^0.5")
+        assertTrue(result4 is EvaluationResult.Success)
+        assertEquals("1.414213562373", (result4 as EvaluationResult.Success).formatted)
+
+        val result5 = engine.evaluate("10 * 2^3")
+        assertTrue(result5 is EvaluationResult.Success)
+        assertEquals("80", (result5 as EvaluationResult.Success).formatted)
+
+        val result6 = engine.evaluate("2^0")
+        assertTrue(result6 is EvaluationResult.Success)
+        assertEquals("1", (result6 as EvaluationResult.Success).formatted)
+    }
+
+    @Test
+    fun testSquareRoot() {
+        val result1 = engine.evaluate("9√")
+        assertTrue(result1 is EvaluationResult.Success)
+        assertEquals("3", (result1 as EvaluationResult.Success).formatted)
+
+        val result2 = engine.evaluate("4 + 9√")
+        assertTrue(result2 is EvaluationResult.Success)
+        assertEquals("7", (result2 as EvaluationResult.Success).formatted)
+
+        val result3 = engine.evaluate("2√")
+        assertTrue(result3 is EvaluationResult.Success)
+        assertEquals("1.414213562373", (result3 as EvaluationResult.Success).formatted)
+
+        val result4 = engine.evaluate("-4√")
+        assertTrue(result4 is EvaluationResult.Success)
+        assertEquals("-2", (result4 as EvaluationResult.Success).formatted)
+
+        val result5 = engine.evaluate("(-4)√")
+        assertTrue(result5 is EvaluationResult.Error)
+    }
+
+    @Test
+    fun testConstants() {
+        val result1 = engine.evaluate("π")
+        assertTrue(result1 is EvaluationResult.Success)
+        assertEquals("3.14159265359", (result1 as EvaluationResult.Success).formatted)
+
+        val result2 = engine.evaluate("2π")
+        assertTrue(result2 is EvaluationResult.Success)
+        assertEquals("6.28318530718", (result2 as EvaluationResult.Success).formatted)
+
+        val result3 = engine.evaluate("e")
+        assertTrue(result3 is EvaluationResult.Success)
+        assertEquals("2.718281828459", (result3 as EvaluationResult.Success).formatted)
+
+        val result4 = engine.evaluate("2e")
+        assertTrue(result4 is EvaluationResult.Success)
+        assertEquals("5.436563656918", (result4 as EvaluationResult.Success).formatted)
+    }
+
+    @Test
     fun testPreviewEvaluation() {
         val preview = engine.evaluatePreview("2 + 3 *")
         assertTrue(preview is EvaluationResult.Success)

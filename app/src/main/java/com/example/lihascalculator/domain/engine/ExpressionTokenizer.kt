@@ -78,6 +78,7 @@ class ExpressionTokenizer {
                                 lastType == TokenType.MINUS ||
                                 lastType == TokenType.MULTIPLY ||
                                 lastType == TokenType.DIVIDE ||
+                                lastType == TokenType.POWER ||
                                 lastType == TokenType.LEFT_PAREN ||
                                 lastType == TokenType.UNARY_MINUS
                     }
@@ -105,6 +106,26 @@ class ExpressionTokenizer {
                     index++
                 }
 
+                char == '^' -> {
+                    rawTokens.add(Token(TokenType.POWER, "^"))
+                    index++
+                }
+
+                char == '√' -> {
+                    rawTokens.add(Token(TokenType.SQRT, "√"))
+                    index++
+                }
+
+                char == 'π' -> {
+                    rawTokens.add(Token(TokenType.NUMBER, "π", BigDecimal("3.14159265358979323846264338327950288")))
+                    index++
+                }
+
+                char == 'e' -> {
+                    rawTokens.add(Token(TokenType.NUMBER, "e", BigDecimal("2.71828182845904523536028747135266250")))
+                    index++
+                }
+
                 char == '(' -> {
                     rawTokens.add(Token(TokenType.LEFT_PAREN, "("))
                     index++
@@ -123,7 +144,7 @@ class ExpressionTokenizer {
         }
 
         // Now perform implicit multiplication insertion
-        // Examples: 2(3) -> 2 * (3), (2)(3) -> (2) * (3), (2)3 -> (2) * 3, 5%2 -> 5% * 2
+        // Examples: 2(3) -> 2 * (3), (2)(3) -> (2) * (3), (2)3 -> (2) * 3, 5%2 -> 5% * 2, 2π -> 2 * π
         val finalTokens = mutableListOf<Token>()
         for (i in rawTokens.indices) {
             val current = rawTokens[i]
@@ -133,6 +154,7 @@ class ExpressionTokenizer {
                     (prev.type == TokenType.NUMBER && current.type == TokenType.LEFT_PAREN) ||
                             (prev.type == TokenType.RIGHT_PAREN && current.type == TokenType.LEFT_PAREN) ||
                             (prev.type == TokenType.RIGHT_PAREN && current.type == TokenType.NUMBER) ||
+                            (prev.type == TokenType.NUMBER && current.type == TokenType.NUMBER) ||
                             (prev.type == TokenType.PERCENT && current.type == TokenType.NUMBER) ||
                             (prev.type == TokenType.PERCENT && current.type == TokenType.LEFT_PAREN)
 
