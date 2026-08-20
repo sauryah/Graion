@@ -1,4 +1,4 @@
-package com.example.lihascalculator.theme
+package com.sauryah.lihas.calculator.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

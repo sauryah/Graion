@@ -1,7 +1,7 @@
-package com.example.lihascalculator.domain.repository
+package com.sauryah.lihas.calculator.domain.repository
 
-import com.example.lihascalculator.domain.model.ThemeMode
-import com.example.lihascalculator.domain.model.UserPreferences
+import com.sauryah.lihas.calculator.domain.model.ThemeMode
+import com.sauryah.lihas.calculator.domain.model.UserPreferences
 import kotlinx.coroutines.flow.Flow
 
 interface SettingsRepository {

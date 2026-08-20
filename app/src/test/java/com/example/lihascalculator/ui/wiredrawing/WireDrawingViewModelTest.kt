@@ -1,7 +1,7 @@
-package com.example.lihascalculator.ui.wiredrawing
+package com.sauryah.lihas.calculator.ui.wiredrawing
 
-import com.example.lihascalculator.domain.model.wiredrawing.SavedSchedule
-import com.example.lihascalculator.domain.repository.WireDrawScheduleRepository
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.SavedSchedule
+import com.sauryah.lihas.calculator.domain.repository.WireDrawScheduleRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow

@@ -1,11 +1,11 @@
-package com.example.lihascalculator.domain.engine.wiredrawing
+package com.sauryah.lihas.calculator.domain.engine.wiredrawing
 
-import com.example.lihascalculator.domain.model.wiredrawing.ConsistencyResult
-import com.example.lihascalculator.domain.model.wiredrawing.PassResult
-import com.example.lihascalculator.domain.model.wiredrawing.QualityRating
-import com.example.lihascalculator.domain.model.wiredrawing.SuggestedIntermediatePass
-import com.example.lihascalculator.domain.model.wiredrawing.TargetCheckResult
-import com.example.lihascalculator.domain.model.wiredrawing.WireDrawingStats
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.ConsistencyResult
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.PassResult
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.QualityRating
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.SuggestedIntermediatePass
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.TargetCheckResult
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.WireDrawingStats
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.math.PI

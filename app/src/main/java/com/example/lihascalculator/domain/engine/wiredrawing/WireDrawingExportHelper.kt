@@ -1,7 +1,7 @@
-package com.example.lihascalculator.domain.engine.wiredrawing
+package com.sauryah.lihas.calculator.domain.engine.wiredrawing
 
-import com.example.lihascalculator.domain.model.wiredrawing.PassResult
-import com.example.lihascalculator.domain.model.wiredrawing.WireDrawingStats
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.PassResult
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.WireDrawingStats
 import java.util.Locale
 
 object WireDrawingExportHelper {

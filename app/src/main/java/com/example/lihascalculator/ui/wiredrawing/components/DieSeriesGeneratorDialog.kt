@@ -1,4 +1,4 @@
-package com.example.lihascalculator.ui.wiredrawing.components
+package com.sauryah.lihas.calculator.ui.wiredrawing.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,8 +26,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.lihascalculator.domain.engine.wiredrawing.WireDrawingCalculatorEngine
-import com.example.lihascalculator.theme.CalculatorColors
+import com.sauryah.lihas.calculator.domain.engine.wiredrawing.WireDrawingCalculatorEngine
+import com.sauryah.lihas.calculator.theme.CalculatorColors
 
 @Composable
 fun DieSeriesGeneratorDialog(

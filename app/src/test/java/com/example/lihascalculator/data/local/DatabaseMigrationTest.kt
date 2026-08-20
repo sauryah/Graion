@@ -1,4 +1,4 @@
-package com.example.lihascalculator.data.local
+package com.sauryah.lihas.calculator.data.local
 
 import androidx.sqlite.db.SupportSQLiteDatabase
 import org.junit.Assert.assertEquals

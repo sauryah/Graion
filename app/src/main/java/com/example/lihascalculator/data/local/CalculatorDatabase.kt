@@ -1,4 +1,4 @@
-package com.example.lihascalculator.data.local
+package com.sauryah.lihas.calculator.data.local
 
 import android.content.Context
 import androidx.room.Database

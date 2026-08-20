@@ -1,6 +1,6 @@
-package com.example.lihascalculator.domain.repository
+package com.sauryah.lihas.calculator.domain.repository
 
-import com.example.lihascalculator.domain.model.wiredrawing.SavedSchedule
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.SavedSchedule
 import kotlinx.coroutines.flow.Flow
 
 interface WireDrawScheduleRepository {

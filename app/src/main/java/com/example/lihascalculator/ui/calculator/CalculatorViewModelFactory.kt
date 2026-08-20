@@ -1,12 +1,12 @@
-package com.example.lihascalculator.ui.calculator
+package com.sauryah.lihas.calculator.ui.calculator
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.lihascalculator.data.local.CalculatorDatabase
-import com.example.lihascalculator.data.preferences.PreferencesRepository
-import com.example.lihascalculator.data.repository.HistoryRepositoryImpl
-import com.example.lihascalculator.domain.engine.CalculatorEngine
+import com.sauryah.lihas.calculator.data.local.CalculatorDatabase
+import com.sauryah.lihas.calculator.data.preferences.PreferencesRepository
+import com.sauryah.lihas.calculator.data.repository.HistoryRepositoryImpl
+import com.sauryah.lihas.calculator.domain.engine.CalculatorEngine
 
 class CalculatorViewModelFactory(
     private val context: Context

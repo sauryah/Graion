@@ -1,4 +1,4 @@
-package com.example.lihascalculator.theme
+package com.sauryah.lihas.calculator.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
-import com.example.lihascalculator.domain.model.ThemeMode
+import com.sauryah.lihas.calculator.domain.model.ThemeMode
 
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryViolet,

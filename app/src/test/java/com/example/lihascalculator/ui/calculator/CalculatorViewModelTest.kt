@@ -1,13 +1,13 @@
-package com.example.lihascalculator.ui.calculator
+package com.sauryah.lihas.calculator.ui.calculator
 
-import com.example.lihascalculator.domain.engine.CalculatorEngine
-import com.example.lihascalculator.domain.model.CalculationRecord
-import com.example.lihascalculator.domain.model.CalculatorAction
-import com.example.lihascalculator.domain.model.CalculatorOperator
-import com.example.lihascalculator.domain.model.ThemeMode
-import com.example.lihascalculator.domain.model.UserPreferences
-import com.example.lihascalculator.domain.repository.HistoryRepository
-import com.example.lihascalculator.domain.repository.SettingsRepository
+import com.sauryah.lihas.calculator.domain.engine.CalculatorEngine
+import com.sauryah.lihas.calculator.domain.model.CalculationRecord
+import com.sauryah.lihas.calculator.domain.model.CalculatorAction
+import com.sauryah.lihas.calculator.domain.model.CalculatorOperator
+import com.sauryah.lihas.calculator.domain.model.ThemeMode
+import com.sauryah.lihas.calculator.domain.model.UserPreferences
+import com.sauryah.lihas.calculator.domain.repository.HistoryRepository
+import com.sauryah.lihas.calculator.domain.repository.SettingsRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow

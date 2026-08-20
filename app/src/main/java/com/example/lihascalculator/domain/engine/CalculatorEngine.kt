@@ -1,9 +1,9 @@
-package com.example.lihascalculator.domain.engine
+package com.sauryah.lihas.calculator.domain.engine
 
-import com.example.lihascalculator.domain.model.CalculatorOperator
-import com.example.lihascalculator.domain.model.EvaluationResult
-import com.example.lihascalculator.domain.model.Token
-import com.example.lihascalculator.domain.model.TokenType
+import com.sauryah.lihas.calculator.domain.model.CalculatorOperator
+import com.sauryah.lihas.calculator.domain.model.EvaluationResult
+import com.sauryah.lihas.calculator.domain.model.Token
+import com.sauryah.lihas.calculator.domain.model.TokenType
 import java.math.BigDecimal
 import java.math.MathContext
 import java.util.ArrayDeque
@@ -18,11 +18,17 @@ class CalculatorEngine(
     // State to support repeated equals (e.g. 5 + 3 = 8, = 11, = 14)
     private var lastOperator: CalculatorOperator? = null
     private var lastOperand: BigDecimal? = null
+    private var lastOperandIsPercent: Boolean = false
 
     /**
      * Fully evaluates an expression string and returns the EvaluationResult.
+     * Caches the last operation so repeated equals can continue the calculation.
      */
     fun evaluate(rawExpression: String): EvaluationResult {
+        return evaluateInternal(rawExpression, cacheLastOperation = true)
+    }
+
+    private fun evaluateInternal(rawExpression: String, cacheLastOperation: Boolean): EvaluationResult {
         val trimmed = rawExpression.trim()
         if (trimmed.isEmpty()) {
             return EvaluationResult.Error.EmptyExpression
@@ -33,8 +39,11 @@ class CalculatorEngine(
             return EvaluationResult.Error.EmptyExpression
         }
 
-        // Cache last operation for repeated equals if this is a binary expression
-        extractAndCacheLastOperation(tokens)
+        // Only cache on an explicit equals evaluation. Live previews must not
+        // pollute the repeated-equals state with intermediate expressions.
+        if (cacheLastOperation) {
+            extractAndCacheLastOperation(tokens)
+        }
 
         val rpn = parser.parseToRpn(tokens)
         return evaluateRpn(rpn)
@@ -43,6 +52,7 @@ class CalculatorEngine(
     /**
      * Executes repeated equals using the cached last operation.
      * E.g. If last was 5 + 3 = 8, repeating equals on "8" calculates 8 + 3 = 11.
+     * Percent operands stay relative to the running value: 200 + 10% = 220, = 242.
      */
     fun repeatLastOperation(currentValue: BigDecimal): EvaluationResult {
         val op = lastOperator
@@ -57,14 +67,33 @@ class CalculatorEngine(
 
         return try {
             val result = when (op) {
-                CalculatorOperator.ADD -> currentValue.add(operand, mathContext)
-                CalculatorOperator.SUBTRACT -> currentValue.subtract(operand, mathContext)
-                CalculatorOperator.MULTIPLY -> currentValue.multiply(operand, mathContext)
+                CalculatorOperator.ADD -> {
+                    if (lastOperandIsPercent) {
+                        currentValue.add(percentOf(currentValue, operand), mathContext)
+                    } else {
+                        currentValue.add(operand, mathContext)
+                    }
+                }
+                CalculatorOperator.SUBTRACT -> {
+                    if (lastOperandIsPercent) {
+                        currentValue.subtract(percentOf(currentValue, operand), mathContext)
+                    } else {
+                        currentValue.subtract(operand, mathContext)
+                    }
+                }
+                CalculatorOperator.MULTIPLY -> {
+                    if (lastOperandIsPercent) {
+                        currentValue.multiply(percentOf(BigDecimal.ONE, operand), mathContext)
+                    } else {
+                        currentValue.multiply(operand, mathContext)
+                    }
+                }
                 CalculatorOperator.DIVIDE -> {
-                    if (operand.compareTo(BigDecimal.ZERO) == 0) {
+                    val divisor = if (lastOperandIsPercent) percentOf(BigDecimal.ONE, operand) else operand
+                    if (divisor.compareTo(BigDecimal.ZERO) == 0) {
                         return EvaluationResult.Error.DivisionByZero
                     }
-                    currentValue.divide(operand, mathContext)
+                    currentValue.divide(divisor, mathContext)
                 }
             }
             EvaluationResult.Success(
@@ -78,16 +107,21 @@ class CalculatorEngine(
         }
     }
 
+    private fun percentOf(value: BigDecimal, percent: BigDecimal): BigDecimal {
+        return value.multiply(percent, mathContext).divide(BigDecimal("100"), mathContext)
+    }
+
     /**
      * Evaluates the expression for live preview as the user types.
      * If the expression ends with an operator, it evaluates the part before it.
+     * Never mutates the repeated-equals cache.
      */
     fun evaluatePreview(rawExpression: String): EvaluationResult? {
         val trimmed = rawExpression.trim()
         if (trimmed.isEmpty()) return null
 
         // Try evaluating as-is
-        val directResult = evaluate(trimmed)
+        val directResult = evaluateInternal(trimmed, cacheLastOperation = false)
         if (directResult is EvaluationResult.Success) {
             return directResult
         }
@@ -108,7 +142,7 @@ class CalculatorEngine(
         }
 
         if (sanitized.isNotEmpty() && sanitized != trimmed) {
-            val fallbackResult = evaluate(sanitized)
+            val fallbackResult = evaluateInternal(sanitized, cacheLastOperation = false)
             if (fallbackResult is EvaluationResult.Success) {
                 return fallbackResult
             }
@@ -120,17 +154,22 @@ class CalculatorEngine(
     fun clearRepeatedOperation() {
         lastOperator = null
         lastOperand = null
+        lastOperandIsPercent = false
     }
 
     /**
      * Evaluates RPN token list using BigDecimal stack.
+     *
+     * Percent operands follow calculator convention:
+     *   a + b% = a + a*b/100, a - b% = a - a*b/100, a * b% = a*b/100, a / b% = a/(b/100)
+     * A standalone b% still evaluates to b/100.
      */
     private fun evaluateRpn(rpn: List<Token>): EvaluationResult {
         if (rpn.isEmpty()) {
             return EvaluationResult.Error.EmptyExpression
         }
 
-        val stack = ArrayDeque<BigDecimal>()
+        val stack = ArrayDeque<StackValue>()
 
         for (token in rpn) {
             when (token.type) {
@@ -142,52 +181,64 @@ class CalculatorEngine(
                             BigDecimal.ZERO
                         }
                     }
-                    stack.push(value)
+                    stack.push(StackValue(value, fromPercent = false))
                 }
 
                 TokenType.PERCENT -> {
                     if (stack.isEmpty()) return EvaluationResult.Error.MalformedExpression
                     val top = stack.pop()
-                    val percentVal = top.divide(BigDecimal("100"), mathContext)
-                    stack.push(percentVal)
+                    val percentVal = top.value.divide(BigDecimal("100"), mathContext)
+                    stack.push(StackValue(percentVal, fromPercent = true))
                 }
 
                 TokenType.UNARY_MINUS -> {
                     if (stack.isEmpty()) return EvaluationResult.Error.MalformedExpression
                     val top = stack.pop()
-                    stack.push(top.negate())
+                    stack.push(StackValue(top.value.negate(), top.fromPercent))
                 }
 
                 TokenType.PLUS -> {
                     if (stack.size < 2) return EvaluationResult.Error.MalformedExpression
                     val b = stack.pop()
                     val a = stack.pop()
-                    stack.push(a.add(b, mathContext))
+                    // b.value is already divided by 100 by the PERCENT token
+                    val result = if (b.fromPercent && !a.fromPercent) {
+                        a.value.add(a.value.multiply(b.value, mathContext), mathContext)
+                    } else {
+                        a.value.add(b.value, mathContext)
+                    }
+                    stack.push(StackValue(result, fromPercent = false))
                 }
 
                 TokenType.MINUS -> {
                     if (stack.size < 2) return EvaluationResult.Error.MalformedExpression
                     val b = stack.pop()
                     val a = stack.pop()
-                    stack.push(a.subtract(b, mathContext))
+                    // b.value is already divided by 100 by the PERCENT token
+                    val result = if (b.fromPercent && !a.fromPercent) {
+                        a.value.subtract(a.value.multiply(b.value, mathContext), mathContext)
+                    } else {
+                        a.value.subtract(b.value, mathContext)
+                    }
+                    stack.push(StackValue(result, fromPercent = false))
                 }
 
                 TokenType.MULTIPLY -> {
                     if (stack.size < 2) return EvaluationResult.Error.MalformedExpression
                     val b = stack.pop()
                     val a = stack.pop()
-                    stack.push(a.multiply(b, mathContext))
+                    stack.push(StackValue(a.value.multiply(b.value, mathContext), fromPercent = false))
                 }
 
                 TokenType.DIVIDE -> {
                     if (stack.size < 2) return EvaluationResult.Error.MalformedExpression
                     val b = stack.pop()
                     val a = stack.pop()
-                    if (b.compareTo(BigDecimal.ZERO) == 0) {
+                    if (b.value.compareTo(BigDecimal.ZERO) == 0) {
                         return EvaluationResult.Error.DivisionByZero
                     }
                     try {
-                        stack.push(a.divide(b, mathContext))
+                        stack.push(StackValue(a.value.divide(b.value, mathContext), fromPercent = false))
                     } catch (e: ArithmeticException) {
                         return EvaluationResult.Error.DivisionByZero
                     }
@@ -206,28 +257,50 @@ class CalculatorEngine(
 
         val finalValue = stack.pop()
         return EvaluationResult.Success(
-            value = finalValue,
-            formatted = NumberFormatter.formatResult(finalValue)
+            value = finalValue.value,
+            formatted = NumberFormatter.formatResult(finalValue.value)
         )
     }
 
     private fun extractAndCacheLastOperation(tokens: List<Token>) {
-        if (tokens.size >= 3) {
-            val lastToken = tokens.last()
-            val secondLast = tokens[tokens.size - 2]
-            if (lastToken.type == TokenType.NUMBER && lastToken.value != null) {
-                val op = when (secondLast.type) {
-                    TokenType.PLUS -> CalculatorOperator.ADD
-                    TokenType.MINUS -> CalculatorOperator.SUBTRACT
-                    TokenType.MULTIPLY -> CalculatorOperator.MULTIPLY
-                    TokenType.DIVIDE -> CalculatorOperator.DIVIDE
-                    else -> null
-                }
-                if (op != null) {
-                    lastOperator = op
-                    lastOperand = lastToken.value
-                }
+        if (tokens.size < 2) return
+
+        val lastToken = tokens.last()
+        val secondLast = tokens[tokens.size - 2]
+
+        // Handle percent operand: "200 + 10%" -> cache ADD with percent operand 10
+        if (lastToken.type == TokenType.PERCENT && secondLast.type == TokenType.NUMBER && secondLast.value != null) {
+            val op = tokens.getOrNull(tokens.size - 3)?.let { operatorOf(it.type) }
+            if (op != null) {
+                lastOperator = op
+                lastOperand = secondLast.value
+                lastOperandIsPercent = true
+            }
+            return
+        }
+
+        if (lastToken.type == TokenType.NUMBER && lastToken.value != null) {
+            val op = operatorOf(secondLast.type)
+            if (op != null) {
+                lastOperator = op
+                lastOperand = lastToken.value
+                lastOperandIsPercent = false
             }
         }
     }
+
+    private fun operatorOf(type: TokenType): CalculatorOperator? {
+        return when (type) {
+            TokenType.PLUS -> CalculatorOperator.ADD
+            TokenType.MINUS -> CalculatorOperator.SUBTRACT
+            TokenType.MULTIPLY -> CalculatorOperator.MULTIPLY
+            TokenType.DIVIDE -> CalculatorOperator.DIVIDE
+            else -> null
+        }
+    }
+
+    private data class StackValue(
+        val value: BigDecimal,
+        val fromPercent: Boolean
+    )
 }

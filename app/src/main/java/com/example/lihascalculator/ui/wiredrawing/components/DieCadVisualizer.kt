@@ -1,4 +1,4 @@
-package com.example.lihascalculator.ui.wiredrawing.components
+package com.sauryah.lihas.calculator.ui.wiredrawing.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -39,8 +39,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.lihascalculator.domain.model.wiredrawing.PassResult
-import com.example.lihascalculator.theme.CalculatorColors
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.PassResult
+import com.sauryah.lihas.calculator.theme.CalculatorColors
 import java.util.Locale
 
 @OptIn(ExperimentalLayoutApi::class)

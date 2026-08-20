@@ -1,4 +1,4 @@
-package com.example.lihascalculator.ui.components
+package com.sauryah.lihas.calculator.ui.components
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -30,9 +30,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.lihascalculator.theme.CalculatorColors
-import com.example.lihascalculator.theme.CalculatorTheme
-import com.example.lihascalculator.ui.util.FeedbackHelper
+import com.sauryah.lihas.calculator.theme.CalculatorColors
+import com.sauryah.lihas.calculator.theme.CalculatorTheme
+import com.sauryah.lihas.calculator.ui.util.FeedbackHelper
 
 private val ButtonShape = RoundedCornerShape(24.dp)
 

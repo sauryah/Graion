@@ -1,4 +1,4 @@
-package com.example.lihascalculator.theme
+package com.sauryah.lihas.calculator.theme
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf

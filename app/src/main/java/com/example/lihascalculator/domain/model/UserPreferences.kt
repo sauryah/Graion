@@ -1,4 +1,4 @@
-package com.example.lihascalculator.domain.model
+package com.sauryah.lihas.calculator.domain.model
 
 data class UserPreferences(
     val themeMode: ThemeMode = ThemeMode.DARK,

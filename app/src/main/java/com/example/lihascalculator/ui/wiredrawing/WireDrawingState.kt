@@ -1,13 +1,13 @@
-package com.example.lihascalculator.ui.wiredrawing
+package com.sauryah.lihas.calculator.ui.wiredrawing
 
 import androidx.compose.runtime.Immutable
-import com.example.lihascalculator.domain.engine.wiredrawing.WireDrawingCalculatorEngine
-import com.example.lihascalculator.domain.model.wiredrawing.ConsistencyResult
-import com.example.lihascalculator.domain.model.wiredrawing.PassResult
-import com.example.lihascalculator.domain.model.wiredrawing.SavedSchedule
-import com.example.lihascalculator.domain.model.wiredrawing.SuggestedIntermediatePass
-import com.example.lihascalculator.domain.model.wiredrawing.TargetCheckResult
-import com.example.lihascalculator.domain.model.wiredrawing.WireDrawingStats
+import com.sauryah.lihas.calculator.domain.engine.wiredrawing.WireDrawingCalculatorEngine
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.ConsistencyResult
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.PassResult
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.SavedSchedule
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.SuggestedIntermediatePass
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.TargetCheckResult
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.WireDrawingStats
 
 enum class WireDrawingBottomNav(val title: String) {
     CALCULATE("Calculate"),

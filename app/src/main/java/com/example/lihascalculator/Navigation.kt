@@ -1,4 +1,4 @@
-package com.example.lihascalculator
+package com.sauryah.lihas.calculator
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -10,15 +10,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.example.lihascalculator.domain.model.CalculatorAction
-import com.example.lihascalculator.ui.calculator.CalculatorScreen
-import com.example.lihascalculator.ui.calculator.CalculatorViewModel
-import com.example.lihascalculator.ui.history.HistoryScreen
-import com.example.lihascalculator.ui.settings.SettingsScreen
-import com.example.lihascalculator.ui.tools.ToolsLandingScreen
-import com.example.lihascalculator.ui.wiredrawing.WireDrawingScreen
-import com.example.lihascalculator.ui.wiredrawing.WireDrawingViewModel
-import com.example.lihascalculator.ui.wiredrawing.WireDrawingViewModelFactory
+import com.sauryah.lihas.calculator.domain.model.CalculatorAction
+import com.sauryah.lihas.calculator.ui.calculator.CalculatorScreen
+import com.sauryah.lihas.calculator.ui.calculator.CalculatorViewModel
+import com.sauryah.lihas.calculator.ui.history.HistoryScreen
+import com.sauryah.lihas.calculator.ui.settings.SettingsScreen
+import com.sauryah.lihas.calculator.ui.tools.ToolsLandingScreen
+import com.sauryah.lihas.calculator.ui.wiredrawing.WireDrawingScreen
+import com.sauryah.lihas.calculator.ui.wiredrawing.WireDrawingViewModel
+import com.sauryah.lihas.calculator.ui.wiredrawing.WireDrawingViewModelFactory
 
 @Composable
 fun MainNavigation(

@@ -1,4 +1,4 @@
-package com.example.lihascalculator.ui.settings
+package com.sauryah.lihas.calculator.ui.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -58,9 +58,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.lihascalculator.domain.model.ThemeMode
-import com.example.lihascalculator.domain.model.UserPreferences
-import com.example.lihascalculator.theme.CalculatorTheme
+import com.sauryah.lihas.calculator.domain.model.ThemeMode
+import com.sauryah.lihas.calculator.domain.model.UserPreferences
+import com.sauryah.lihas.calculator.theme.CalculatorTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

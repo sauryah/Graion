@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.lihascalculator"
+    namespace = "com.sauryah.lihas.calculator"
     compileSdk = 36
     defaultConfig {
         applicationId = "com.sauryah.lihas.calculator"

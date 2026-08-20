@@ -1,4 +1,4 @@
-package com.example.lihascalculator.ui.components
+package com.sauryah.lihas.calculator.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.lihascalculator.domain.model.CalculatorAction
-import com.example.lihascalculator.domain.model.CalculatorOperator
+import com.sauryah.lihas.calculator.domain.model.CalculatorAction
+import com.sauryah.lihas.calculator.domain.model.CalculatorOperator
 
 @Composable
 fun CalculatorKeypad(

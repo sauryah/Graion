@@ -1,10 +1,10 @@
-package com.example.lihascalculator.data.repository
+package com.sauryah.lihas.calculator.data.repository
 
-import com.example.lihascalculator.data.local.CalculationDao
-import com.example.lihascalculator.data.local.CalculationEntity
-import com.example.lihascalculator.data.local.toDomainModel
-import com.example.lihascalculator.domain.model.CalculationRecord
-import com.example.lihascalculator.domain.repository.HistoryRepository
+import com.sauryah.lihas.calculator.data.local.CalculationDao
+import com.sauryah.lihas.calculator.data.local.CalculationEntity
+import com.sauryah.lihas.calculator.data.local.toDomainModel
+import com.sauryah.lihas.calculator.domain.model.CalculationRecord
+import com.sauryah.lihas.calculator.domain.repository.HistoryRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn

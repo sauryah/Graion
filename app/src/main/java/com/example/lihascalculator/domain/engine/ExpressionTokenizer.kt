@@ -1,7 +1,7 @@
-package com.example.lihascalculator.domain.engine
+package com.sauryah.lihas.calculator.domain.engine
 
-import com.example.lihascalculator.domain.model.Token
-import com.example.lihascalculator.domain.model.TokenType
+import com.sauryah.lihas.calculator.domain.model.Token
+import com.sauryah.lihas.calculator.domain.model.TokenType
 import java.math.BigDecimal
 
 class ExpressionTokenizer {

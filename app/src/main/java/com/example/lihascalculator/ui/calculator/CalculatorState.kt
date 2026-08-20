@@ -1,7 +1,7 @@
-package com.example.lihascalculator.ui.calculator
+package com.sauryah.lihas.calculator.ui.calculator
 
 import androidx.compose.runtime.Immutable
-import com.example.lihascalculator.domain.engine.NumberFormatter
+import com.sauryah.lihas.calculator.domain.engine.NumberFormatter
 
 @Immutable
 data class CalculatorState(

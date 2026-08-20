@@ -1,4 +1,4 @@
-package com.example.lihascalculator.ui.history
+package com.sauryah.lihas.calculator.ui.history
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -49,10 +49,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.lihascalculator.domain.engine.NumberFormatter
-import com.example.lihascalculator.domain.model.CalculationRecord
-import com.example.lihascalculator.theme.CalculatorColors
-import com.example.lihascalculator.theme.CalculatorTheme
+import com.sauryah.lihas.calculator.domain.engine.NumberFormatter
+import com.sauryah.lihas.calculator.domain.model.CalculationRecord
+import com.sauryah.lihas.calculator.theme.CalculatorColors
+import com.sauryah.lihas.calculator.theme.CalculatorTheme
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

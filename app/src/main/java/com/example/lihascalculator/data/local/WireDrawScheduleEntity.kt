@@ -1,9 +1,9 @@
-package com.example.lihascalculator.data.local
+package com.sauryah.lihas.calculator.data.local
 
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.example.lihascalculator.domain.model.wiredrawing.SavedSchedule
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.SavedSchedule
 
 @Entity(
     tableName = "wire_draw_schedules",

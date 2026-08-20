@@ -1,4 +1,4 @@
-package com.example.lihascalculator.ui.wiredrawing.components
+package com.sauryah.lihas.calculator.ui.wiredrawing.components
 
 import android.content.Context
 import androidx.compose.foundation.background
@@ -41,11 +41,11 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.lihascalculator.domain.engine.wiredrawing.WireDrawingExportHelper
-import com.example.lihascalculator.domain.model.wiredrawing.SavedSchedule
-import com.example.lihascalculator.theme.CalculatorColors
-import com.example.lihascalculator.ui.util.ShareHelper
-import com.example.lihascalculator.ui.wiredrawing.WireDrawingState
+import com.sauryah.lihas.calculator.domain.engine.wiredrawing.WireDrawingExportHelper
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.SavedSchedule
+import com.sauryah.lihas.calculator.theme.CalculatorColors
+import com.sauryah.lihas.calculator.ui.util.ShareHelper
+import com.sauryah.lihas.calculator.ui.wiredrawing.WireDrawingState
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

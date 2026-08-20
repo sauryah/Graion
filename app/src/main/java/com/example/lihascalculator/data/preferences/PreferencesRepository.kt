@@ -1,4 +1,4 @@
-package com.example.lihascalculator.data.preferences
+package com.sauryah.lihas.calculator.data.preferences
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -8,9 +8,9 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.lihascalculator.domain.model.ThemeMode
-import com.example.lihascalculator.domain.model.UserPreferences
-import com.example.lihascalculator.domain.repository.SettingsRepository
+import com.sauryah.lihas.calculator.domain.model.ThemeMode
+import com.sauryah.lihas.calculator.domain.model.UserPreferences
+import com.sauryah.lihas.calculator.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map

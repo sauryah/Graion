@@ -1,4 +1,4 @@
-package com.example.lihascalculator.ui.calculator
+package com.sauryah.lihas.calculator.ui.calculator
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -28,11 +28,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.lihascalculator.domain.model.CalculatorAction
-import com.example.lihascalculator.domain.model.UserPreferences
-import com.example.lihascalculator.theme.CalculatorTheme
-import com.example.lihascalculator.ui.components.CalculatorKeypad
-import com.example.lihascalculator.ui.components.DisplayArea
+import com.sauryah.lihas.calculator.domain.model.CalculatorAction
+import com.sauryah.lihas.calculator.domain.model.UserPreferences
+import com.sauryah.lihas.calculator.theme.CalculatorTheme
+import com.sauryah.lihas.calculator.ui.components.CalculatorKeypad
+import com.sauryah.lihas.calculator.ui.components.DisplayArea
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,4 +1,4 @@
-package com.example.lihascalculator
+package com.sauryah.lihas.calculator
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
@@ -6,12 +6,12 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.example.lihascalculator.domain.model.CalculatorAction
-import com.example.lihascalculator.domain.model.CalculatorOperator
-import com.example.lihascalculator.domain.model.UserPreferences
-import com.example.lihascalculator.theme.LihasCalculatorTheme
-import com.example.lihascalculator.ui.calculator.CalculatorScreen
-import com.example.lihascalculator.ui.calculator.CalculatorState
+import com.sauryah.lihas.calculator.domain.model.CalculatorAction
+import com.sauryah.lihas.calculator.domain.model.CalculatorOperator
+import com.sauryah.lihas.calculator.domain.model.UserPreferences
+import com.sauryah.lihas.calculator.theme.LihasCalculatorTheme
+import com.sauryah.lihas.calculator.ui.calculator.CalculatorScreen
+import com.sauryah.lihas.calculator.ui.calculator.CalculatorState
 import org.junit.Rule
 import org.junit.Test
 
@@ -31,6 +31,7 @@ class CalculatorScreenTest {
                     state = state,
                     preferences = preferences,
                     onAction = {},
+                    onNavigateToTools = {},
                     onNavigateToHistory = {},
                     onNavigateToSettings = {}
                 )
@@ -61,6 +62,7 @@ class CalculatorScreenTest {
                     state = state,
                     preferences = preferences,
                     onAction = { recordedActions.add(it) },
+                    onNavigateToTools = {},
                     onNavigateToHistory = {},
                     onNavigateToSettings = {}
                 )

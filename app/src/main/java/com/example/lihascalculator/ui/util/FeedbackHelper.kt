@@ -1,4 +1,4 @@
-package com.example.lihascalculator.ui.util
+package com.sauryah.lihas.calculator.ui.util
 
 import android.content.Context
 import android.media.AudioManager

@@ -1,4 +1,4 @@
-package com.example.lihascalculator.ui.wiredrawing.components
+package com.sauryah.lihas.calculator.ui.wiredrawing.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -30,8 +30,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.lihascalculator.theme.CalculatorColors
-import com.example.lihascalculator.ui.wiredrawing.WireDrawingState
+import com.sauryah.lihas.calculator.theme.CalculatorColors
+import com.sauryah.lihas.calculator.ui.wiredrawing.WireDrawingState
 
 fun LazyListScope.optimizeTabContent(
     state: WireDrawingState,

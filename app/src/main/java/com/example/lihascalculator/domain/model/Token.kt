@@ -1,4 +1,4 @@
-package com.example.lihascalculator.domain.model
+package com.sauryah.lihas.calculator.domain.model
 
 import java.math.BigDecimal
 

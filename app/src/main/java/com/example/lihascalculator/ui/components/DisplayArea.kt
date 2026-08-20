@@ -1,4 +1,4 @@
-package com.example.lihascalculator.ui.components
+package com.sauryah.lihas.calculator.ui.components
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -45,9 +45,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.lihascalculator.theme.CalculatorTheme
-import com.example.lihascalculator.ui.calculator.CalculatorState
-import com.example.lihascalculator.ui.util.FeedbackHelper
+import com.sauryah.lihas.calculator.theme.CalculatorTheme
+import com.sauryah.lihas.calculator.ui.calculator.CalculatorState
+import com.sauryah.lihas.calculator.ui.util.FeedbackHelper
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

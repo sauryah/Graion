@@ -1,4 +1,4 @@
-package com.example.lihascalculator.domain.model.wiredrawing
+package com.sauryah.lihas.calculator.domain.model.wiredrawing
 
 import kotlinx.serialization.Serializable
 

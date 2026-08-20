@@ -1,4 +1,4 @@
-package com.example.lihascalculator.data.local
+package com.sauryah.lihas.calculator.data.local
 
 import androidx.room.Dao
 import androidx.room.Insert

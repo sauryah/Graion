@@ -1,4 +1,4 @@
-package com.example.lihascalculator.domain.engine
+package com.sauryah.lihas.calculator.domain.engine
 
 import java.math.BigDecimal
 import java.math.RoundingMode

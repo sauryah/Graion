@@ -1,6 +1,6 @@
-package com.example.lihascalculator.domain.engine
+package com.sauryah.lihas.calculator.domain.engine
 
-import com.example.lihascalculator.domain.model.EvaluationResult
+import com.sauryah.lihas.calculator.domain.model.EvaluationResult
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -135,6 +135,73 @@ class CalculatorEngineTest {
         val result2 = engine.evaluate("100 * 50%")
         assertTrue(result2 is EvaluationResult.Success)
         assertEquals("50", (result2 as EvaluationResult.Success).formatted)
+    }
+
+    @Test
+    fun testPercentArithmetic() {
+        // Calculator convention: a + b% = a + a*b/100
+        val result1 = engine.evaluate("200 + 10%")
+        assertTrue(result1 is EvaluationResult.Success)
+        assertEquals("220", (result1 as EvaluationResult.Success).formatted)
+
+        val result2 = engine.evaluate("200 - 10%")
+        assertTrue(result2 is EvaluationResult.Success)
+        assertEquals("180", (result2 as EvaluationResult.Success).formatted)
+
+        val result3 = engine.evaluate("100 / 50%")
+        assertTrue(result3 is EvaluationResult.Success)
+        assertEquals("200", (result3 as EvaluationResult.Success).formatted)
+
+        // Chained percent stays relative to running value
+        val result4 = engine.evaluate("200 + 10% + 5%")
+        assertTrue(result4 is EvaluationResult.Success)
+        assertEquals("231", (result4 as EvaluationResult.Success).formatted)
+
+        // Percent of an existing expression via parentheses is a plain value
+        val result5 = engine.evaluate("(200 + 10)%")
+        assertTrue(result5 is EvaluationResult.Success)
+        assertEquals("2.1", (result5 as EvaluationResult.Success).formatted)
+    }
+
+    @Test
+    fun testPercentRepeatedEquals() {
+        // 200 + 10% = 220, repeat equals -> 220 + 10% = 242
+        val result1 = engine.evaluate("200 + 10%")
+        assertTrue(result1 is EvaluationResult.Success)
+        assertEquals("220", (result1 as EvaluationResult.Success).formatted)
+
+        val result2 = engine.repeatLastOperation(result1.value)
+        assertTrue(result2 is EvaluationResult.Success)
+        assertEquals("242", (result2 as EvaluationResult.Success).formatted)
+
+        // 100 * 50% = 50, repeat -> 50 * 50% = 25
+        engine.clearRepeatedOperation()
+        val result3 = engine.evaluate("100 * 50%")
+        assertTrue(result3 is EvaluationResult.Success)
+        assertEquals("50", (result3 as EvaluationResult.Success).formatted)
+
+        val result4 = engine.repeatLastOperation(result3.value)
+        assertTrue(result4 is EvaluationResult.Success)
+        assertEquals("25", (result4 as EvaluationResult.Success).formatted)
+    }
+
+    @Test
+    fun testPreviewDoesNotPolluteRepeatedEqualsCache() {
+        // Live preview must not register the last operation for repeated equals
+        engine.evaluatePreview("5 + 3")
+
+        val repeat = engine.repeatLastOperation(BigDecimal("8"))
+        assertTrue(repeat is EvaluationResult.Success)
+        assertEquals("8", (repeat as EvaluationResult.Success).formatted)
+
+        // Only an explicit equals evaluation registers the operation
+        val result = engine.evaluate("5 + 3")
+        assertTrue(result is EvaluationResult.Success)
+        assertEquals("8", (result as EvaluationResult.Success).formatted)
+
+        val repeat2 = engine.repeatLastOperation(BigDecimal("8"))
+        assertTrue(repeat2 is EvaluationResult.Success)
+        assertEquals("11", (repeat2 as EvaluationResult.Success).formatted)
     }
 
     @Test

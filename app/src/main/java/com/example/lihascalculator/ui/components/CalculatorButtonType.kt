@@ -1,4 +1,4 @@
-package com.example.lihascalculator.ui.components
+package com.sauryah.lihas.calculator.ui.components
 
 enum class CalculatorButtonType {
     NUMBER,

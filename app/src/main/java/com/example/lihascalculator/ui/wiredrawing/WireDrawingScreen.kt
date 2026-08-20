@@ -1,4 +1,4 @@
-package com.example.lihascalculator.ui.wiredrawing
+package com.sauryah.lihas.calculator.ui.wiredrawing
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,20 +40,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.lihascalculator.theme.LocalCalculatorColors
-import com.example.lihascalculator.ui.wiredrawing.components.ConsistencyDetailDialog
-import com.example.lihascalculator.ui.wiredrawing.components.DieSeriesGeneratorDialog
-import com.example.lihascalculator.ui.wiredrawing.components.DieSuggesterDialog
-import com.example.lihascalculator.ui.wiredrawing.components.EditDieDialog
-import com.example.lihascalculator.ui.wiredrawing.components.EditDiesInputDialog
-import com.example.lihascalculator.ui.wiredrawing.components.PassDetailBottomSheet
-import com.example.lihascalculator.ui.wiredrawing.components.SaveScheduleDialog
-import com.example.lihascalculator.ui.wiredrawing.components.ScheduleCompareDialog
-import com.example.lihascalculator.ui.wiredrawing.components.TargetCheckerDialog
-import com.example.lihascalculator.ui.wiredrawing.components.analysisTabContent
-import com.example.lihascalculator.ui.wiredrawing.components.calculateTabContent
-import com.example.lihascalculator.ui.wiredrawing.components.optimizeTabContent
-import com.example.lihascalculator.ui.wiredrawing.components.savedTabContent
+import com.sauryah.lihas.calculator.theme.LocalCalculatorColors
+import com.sauryah.lihas.calculator.ui.wiredrawing.components.ConsistencyDetailDialog
+import com.sauryah.lihas.calculator.ui.wiredrawing.components.DieSeriesGeneratorDialog
+import com.sauryah.lihas.calculator.ui.wiredrawing.components.DieSuggesterDialog
+import com.sauryah.lihas.calculator.ui.wiredrawing.components.EditDieDialog
+import com.sauryah.lihas.calculator.ui.wiredrawing.components.EditDiesInputDialog
+import com.sauryah.lihas.calculator.ui.wiredrawing.components.PassDetailBottomSheet
+import com.sauryah.lihas.calculator.ui.wiredrawing.components.SaveScheduleDialog
+import com.sauryah.lihas.calculator.ui.wiredrawing.components.ScheduleCompareDialog
+import com.sauryah.lihas.calculator.ui.wiredrawing.components.TargetCheckerDialog
+import com.sauryah.lihas.calculator.ui.wiredrawing.components.analysisTabContent
+import com.sauryah.lihas.calculator.ui.wiredrawing.components.calculateTabContent
+import com.sauryah.lihas.calculator.ui.wiredrawing.components.optimizeTabContent
+import com.sauryah.lihas.calculator.ui.wiredrawing.components.savedTabContent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

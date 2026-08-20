@@ -1,4 +1,4 @@
-package com.example.lihascalculator
+package com.sauryah.lihas.calculator
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,9 +11,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.lihascalculator.theme.LihasCalculatorTheme
-import com.example.lihascalculator.ui.calculator.CalculatorViewModel
-import com.example.lihascalculator.ui.calculator.CalculatorViewModelFactory
+import com.sauryah.lihas.calculator.theme.LihasCalculatorTheme
+import com.sauryah.lihas.calculator.ui.calculator.CalculatorViewModel
+import com.sauryah.lihas.calculator.ui.calculator.CalculatorViewModelFactory
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

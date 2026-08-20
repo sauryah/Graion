@@ -1,10 +1,10 @@
-package com.example.lihascalculator.ui.wiredrawing
+package com.sauryah.lihas.calculator.ui.wiredrawing
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.lihascalculator.data.local.CalculatorDatabase
-import com.example.lihascalculator.data.repository.WireDrawScheduleRepositoryImpl
+import com.sauryah.lihas.calculator.data.local.CalculatorDatabase
+import com.sauryah.lihas.calculator.data.repository.WireDrawScheduleRepositoryImpl
 
 class WireDrawingViewModelFactory(
     private val context: Context

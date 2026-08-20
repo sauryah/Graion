@@ -1,4 +1,4 @@
-package com.example.lihascalculator
+package com.sauryah.lihas.calculator
 
 import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable

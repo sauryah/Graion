@@ -1,11 +1,11 @@
-package com.example.lihascalculator.ui.wiredrawing
+package com.sauryah.lihas.calculator.ui.wiredrawing
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.lihascalculator.domain.engine.wiredrawing.WireDrawingCalculatorEngine
-import com.example.lihascalculator.domain.model.wiredrawing.PassResult
-import com.example.lihascalculator.domain.model.wiredrawing.SavedSchedule
-import com.example.lihascalculator.domain.repository.WireDrawScheduleRepository
+import com.sauryah.lihas.calculator.domain.engine.wiredrawing.WireDrawingCalculatorEngine
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.PassResult
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.SavedSchedule
+import com.sauryah.lihas.calculator.domain.repository.WireDrawScheduleRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

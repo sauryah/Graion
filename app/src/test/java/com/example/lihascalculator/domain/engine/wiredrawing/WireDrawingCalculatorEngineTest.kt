@@ -1,6 +1,6 @@
-package com.example.lihascalculator.domain.engine.wiredrawing
+package com.sauryah.lihas.calculator.domain.engine.wiredrawing
 
-import com.example.lihascalculator.domain.model.wiredrawing.QualityRating
+import com.sauryah.lihas.calculator.domain.model.wiredrawing.QualityRating
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
