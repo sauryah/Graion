@@ -25,6 +25,59 @@ fun CalculatorKeypad(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
+        // Row 0: MC | MR | M- | M+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            CalculatorButton(
+                symbol = "MC",
+                type = CalculatorButtonType.FUNCTION,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Memory Clear",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.MemoryClear) }
+            )
+            CalculatorButton(
+                symbol = "MR",
+                type = CalculatorButtonType.FUNCTION,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Memory Recall",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.MemoryRecall) }
+            )
+            CalculatorButton(
+                symbol = "M-",
+                type = CalculatorButtonType.FUNCTION,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Memory Subtract",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.MemorySubtract) }
+            )
+            CalculatorButton(
+                symbol = "M+",
+                type = CalculatorButtonType.FUNCTION,
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentDesc = "Memory Add",
+                hapticsEnabled = hapticsEnabled,
+                soundEnabled = soundEnabled,
+                onClick = { onAction(CalculatorAction.MemoryAdd) }
+            )
+        }
+
         // Row 1: AC | ( ) | % | ÷
         Row(
             modifier = Modifier

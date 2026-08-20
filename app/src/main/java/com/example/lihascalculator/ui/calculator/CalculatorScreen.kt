@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.History
@@ -53,12 +54,26 @@ fun CalculatorScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = "Lical",
-                        color = colors.textPrimary,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "Lical",
+                            color = colors.textPrimary,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        if (state.memory != null) {
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "M",
+                                color = colors.accentPrimary,
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.semantics {
+                                    contentDescription = "Memory stored"
+                                }
+                            )
+                        }
+                    }
                 },
                 actions = {
                     IconButton(

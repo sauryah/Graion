@@ -219,6 +219,67 @@ class CalculatorViewModelTest {
         advanceUntilIdle()
         assertTrue(fakeSettingsRepository.userPreferences.value.soundEnabled)
     }
+@Test
+    fun testMemoryAddSubtractRecallClear() {
+        // 5 -> M+ stores 5
+        viewModel.onAction(CalculatorAction.Number(5))
+        viewModel.onAction(CalculatorAction.MemoryAdd)
+        assertEquals("5", viewModel.uiState.value.memory)
+
+        // 3 -> M+ adds 3, memory becomes 8
+        viewModel.onAction(CalculatorAction.Number(3))
+        viewModel.onAction(CalculatorAction.MemoryAdd)
+        assertEquals("8", viewModel.uiState.value.memory)
+
+        // 2 -> M- subtracts 2, memory becomes 6
+        viewModel.onAction(CalculatorAction.Number(2))
+        viewModel.onAction(CalculatorAction.MemorySubtract)
+        assertEquals("6", viewModel.uiState.value.memory)
+
+        // MR recalls memory into expression
+        viewModel.onAction(CalculatorAction.MemoryRecall)
+        assertEquals("6", viewModel.uiState.value.expression)
+
+        // MC clears memory
+        viewModel.onAction(CalculatorAction.MemoryClear)
+        assertNull(viewModel.uiState.value.memory)
+    }
+
+    @Test
+    fun testMemoryAddUsesCalculatedResult() = runTest {
+        viewModel.onAction(CalculatorAction.Number(2))
+        viewModel.onAction(CalculatorAction.Operator(CalculatorOperator.ADD))
+        viewModel.onAction(CalculatorAction.Number(3))
+        viewModel.onAction(CalculatorAction.Calculate)
+        advanceUntilIdle()
+
+        viewModel.onAction(CalculatorAction.MemoryAdd)
+        assertEquals("5", viewModel.uiState.value.memory)
+    }
+
+    @Test
+    fun testMemoryRecallWhenEmptyIsNoOp() {
+        viewModel.onAction(CalculatorAction.MemoryRecall)
+        assertEquals("0", viewModel.uiState.value.expression)
+        assertNull(viewModel.uiState.value.memory)
+    }
+
+    @Test
+    fun testMemoryPersistsAcrossOperations() = runTest {
+        // Store 10, then calculate 4+4=8, memory must stay 10
+        viewModel.onAction(CalculatorAction.Number(1))
+        viewModel.onAction(CalculatorAction.Number(0))
+        viewModel.onAction(CalculatorAction.MemoryAdd)
+
+        viewModel.onAction(CalculatorAction.Number(4))
+        viewModel.onAction(CalculatorAction.Operator(CalculatorOperator.ADD))
+        viewModel.onAction(CalculatorAction.Number(4))
+        viewModel.onAction(CalculatorAction.Calculate)
+        advanceUntilIdle()
+
+        assertEquals("8", viewModel.uiState.value.result)
+        assertEquals("10", viewModel.uiState.value.memory)
+    }
 }
 
 private class FakeHistoryRepository : HistoryRepository {

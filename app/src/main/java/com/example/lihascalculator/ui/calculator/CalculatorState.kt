@@ -12,7 +12,8 @@ data class CalculatorState(
     val isError: Boolean = false,
     val errorMessage: String? = null,
     val isCalculated: Boolean = false,
-    val openParenthesesCount: Int = 0
+    val openParenthesesCount: Int = 0,
+    val memory: String? = null
 ) {
     companion object {
         fun initial(): CalculatorState = CalculatorState(

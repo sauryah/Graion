@@ -54,6 +54,10 @@ class CalculatorViewModel(
             is CalculatorAction.Parentheses -> handleParentheses()
             is CalculatorAction.Percentage -> handlePercentage()
             is CalculatorAction.ToggleSign -> handleToggleSign()
+            is CalculatorAction.MemoryAdd -> handleMemoryAdd()
+            is CalculatorAction.MemorySubtract -> handleMemorySubtract()
+            is CalculatorAction.MemoryRecall -> handleMemoryRecall()
+            is CalculatorAction.MemoryClear -> handleMemoryClear()
             is CalculatorAction.SetExpression -> handleSetExpression(action.expression)
             is CalculatorAction.UseResult -> handleUseResult(action.result)
         }
@@ -335,6 +339,66 @@ class CalculatorViewModel(
                 errorMessage = null,
                 isCalculated = false
             )
+        }
+    }
+
+    private fun handleMemoryAdd() {
+        _uiState.update { current ->
+            val value = currentNumericValue(current) ?: return@update current
+            val base = current.memory?.toBigDecimalOrNull() ?: BigDecimal.ZERO
+            storeMemoryAndReset(current, NumberFormatter.formatResult(base.add(value)))
+        }
+    }
+
+    private fun handleMemorySubtract() {
+        _uiState.update { current ->
+            val value = currentNumericValue(current) ?: return@update current
+            val base = current.memory?.toBigDecimalOrNull() ?: BigDecimal.ZERO
+            storeMemoryAndReset(current, NumberFormatter.formatResult(base.subtract(value)))
+        }
+    }
+
+    private fun storeMemoryAndReset(current: CalculatorState, newMemory: String): CalculatorState {
+        // Memory ops finalize the current entry (like equals) and reset the display
+        return current.copy(
+            memory = newMemory,
+            expression = "0",
+            displayExpression = "0",
+            result = "",
+            previewResult = null,
+            isCalculated = false,
+            isError = false,
+            errorMessage = null
+        )
+    }
+
+    private fun handleMemoryRecall() {
+        _uiState.update { current ->
+            val memory = current.memory ?: return@update current
+            CalculatorState(
+                expression = memory,
+                displayExpression = NumberFormatter.formatDisplayExpression(memory),
+                result = memory,
+                isCalculated = false,
+                isError = false,
+                memory = current.memory
+            )
+        }
+    }
+
+    private fun handleMemoryClear() {
+        _uiState.update { current -> current.copy(memory = null) }
+    }
+
+    private fun currentNumericValue(state: CalculatorState): BigDecimal? {
+        val preview = state.previewResult
+        return when {
+            state.isCalculated && state.result.isNotEmpty() -> state.result.toBigDecimalOrNull()
+            !preview.isNullOrEmpty() -> preview.toBigDecimalOrNull()
+            else -> {
+                val segment = state.expression.takeLastWhile { it.isDigit() || it == '.' }
+                if (segment.isEmpty() || segment == ".") null else segment.toBigDecimalOrNull()
+            }
         }
     }
 

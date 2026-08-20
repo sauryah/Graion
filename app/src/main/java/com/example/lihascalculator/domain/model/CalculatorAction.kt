@@ -29,6 +29,10 @@ sealed interface CalculatorAction {
     data object Parentheses : CalculatorAction
     data object Percentage : CalculatorAction
     data object ToggleSign : CalculatorAction
+    data object MemoryAdd : CalculatorAction
+    data object MemorySubtract : CalculatorAction
+    data object MemoryRecall : CalculatorAction
+    data object MemoryClear : CalculatorAction
     data class SetExpression(val expression: String) : CalculatorAction
     data class UseResult(val result: String) : CalculatorAction
 }
