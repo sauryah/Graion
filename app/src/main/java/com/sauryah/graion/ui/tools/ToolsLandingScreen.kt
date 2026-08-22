@@ -41,6 +41,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sauryah.graion.theme.LocalCalculatorColors
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 
 data class EngineeringToolItem(
     val id: String,
@@ -90,7 +92,8 @@ fun ToolsLandingScreen(
                         text = "Engineering Tools",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = colors.textPrimary
+                        color = colors.textPrimary,
+                        modifier = Modifier.semantics { heading() }
                     )
                 },
                 navigationIcon = {
@@ -122,7 +125,8 @@ fun ToolsLandingScreen(
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     color = colors.accentPrimary,
-                    letterSpacing = 1.sp
+                    letterSpacing = 1.sp,
+                    modifier = Modifier.semantics { heading() }
                 )
             }
 
