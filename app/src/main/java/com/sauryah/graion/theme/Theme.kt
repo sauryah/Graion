@@ -44,46 +44,6 @@ private val LightColorScheme = lightColorScheme(
     onError = Color.White
 )
 
-private val DarkCalculatorColors = CalculatorColors(
-    background = DarkBackground,
-    surface = DarkSurface,
-    surfaceVariant = DarkSurfaceVariant,
-    displayBackground = DarkDisplayBackground,
-    numberButton = DarkNumberButton,
-    numberText = DarkNumberText,
-    functionButton = DarkFunctionButton,
-    functionText = DarkFunctionText,
-    operatorButton = DarkOperatorButton,
-    operatorText = DarkOperatorText,
-    equalsButton = DarkEqualsButton,
-    equalsText = DarkEqualsText,
-    textPrimary = DarkTextPrimary,
-    textSecondary = DarkTextSecondary,
-    textPreview = DarkTextPreview,
-    error = DarkError,
-    isDark = true
-)
-
-private val LightCalculatorColors = CalculatorColors(
-    background = LightBackground,
-    surface = LightSurface,
-    surfaceVariant = LightSurfaceVariant,
-    displayBackground = LightDisplayBackground,
-    numberButton = LightNumberButton,
-    numberText = LightNumberText,
-    functionButton = LightFunctionButton,
-    functionText = LightFunctionText,
-    operatorButton = LightOperatorButton,
-    operatorText = LightOperatorText,
-    equalsButton = LightEqualsButton,
-    equalsText = LightEqualsText,
-    textPrimary = LightTextPrimary,
-    textSecondary = LightTextSecondary,
-    textPreview = LightTextPreview,
-    error = LightError,
-    isDark = false
-)
-
 object CalculatorTheme {
     val colors: CalculatorColors
         @Composable
