@@ -57,6 +57,13 @@ fun MainNavigation(
                 ToolsLandingScreen(
                     onNavigateToWireDrawing = { backStack.add(WireDrawingRoute) },
                     onNavigateToUnitConverter = { backStack.add(UnitConverterRoute) },
+                    onNavigateToPythonWorkbench = { backStack.add(PythonWorkbenchRoute) },
+                    onBackClick = { backStack.removeLastOrNull() }
+                )
+            }
+
+            entry<PythonWorkbenchRoute> {
+                com.sauryah.graion.ui.python.PythonWorkbenchScreen(
                     onBackClick = { backStack.removeLastOrNull() }
                 )
             }

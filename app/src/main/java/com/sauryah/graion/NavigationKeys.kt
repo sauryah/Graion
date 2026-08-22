@@ -20,3 +20,7 @@ data object WireDrawingRoute : NavKey
 
 @Serializable
 data object UnitConverterRoute : NavKey
+
+@Serializable
+data object PythonWorkbenchRoute : NavKey
+

@@ -21,6 +21,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Architecture
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Straighten
+import androidx.compose.material.icons.filled.Terminal
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -58,6 +59,7 @@ data class EngineeringToolItem(
 fun ToolsLandingScreen(
     onNavigateToWireDrawing: () -> Unit,
     onNavigateToUnitConverter: () -> Unit,
+    onNavigateToPythonWorkbench: () -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -79,6 +81,14 @@ fun ToolsLandingScreen(
             description = "Convert between length, mass, area, volume, temperature, and speed units instantly.",
             icon = Icons.Default.Straighten,
             onOpen = onNavigateToUnitConverter
+        ),
+        EngineeringToolItem(
+            id = "python-workbench",
+            title = "Python Workbench",
+            category = "SCRIPTING & MATH",
+            description = "Run Python scripts, engineering formulas, custom mathematical algorithms, and symbolic computations directly on-device.",
+            icon = Icons.Default.Terminal,
+            onOpen = onNavigateToPythonWorkbench
         )
     )
 
