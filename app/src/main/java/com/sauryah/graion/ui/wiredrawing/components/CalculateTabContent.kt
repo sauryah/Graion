@@ -3,6 +3,7 @@ package com.sauryah.graion.ui.wiredrawing.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,25 +16,35 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Calculate
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.South
+import androidx.compose.material.icons.filled.TableChart
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.ViewAgenda
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sauryah.graion.domain.model.wiredrawing.PassResult
@@ -232,170 +243,275 @@ fun LazyListScope.calculateTabContent(
             }
         }
 
-        // Pass List Header
+        // Pass Schedule Table Card (High Density Columnar Grid)
         item {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "DRAWING PASSES",
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.textSecondary,
-                    letterSpacing = 1.sp
-                )
-                Text(
-                    text = "Tap pass for details",
-                    fontSize = 11.sp,
-                    color = colors.textSecondary
-                )
-            }
-        }
-
-        // Pass Cards List (Mobile-friendly card per pass!)
-        items(state.passes, key = { it.passNumber }) { pass ->
-            PassCard(
-                pass = pass,
+            PassScheduleTableCard(
+                passes = state.passes,
+                stats = state.stats,
                 colors = colors,
-                onClick = { onPassClick(pass) },
-                onEditClick = { onEditPassClick(pass) }
+                onPassClick = onPassClick,
+                onEditPassClick = onEditPassClick
             )
         }
     }
 }
 
 @Composable
-private fun PassCard(
-    pass: PassResult,
+private fun PassScheduleTableCard(
+    passes: List<PassResult>,
+    stats: com.sauryah.graion.domain.model.wiredrawing.WireDrawingStats,
     colors: CalculatorColors,
-    onClick: () -> Unit,
-    onEditClick: () -> Unit
+    onPassClick: (PassResult) -> Unit,
+    onEditPassClick: (PassResult) -> Unit
 ) {
+    val scrollState = rememberScrollState()
+
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() },
-        shape = RoundedCornerShape(14.dp),
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = colors.surface),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(14.dp)
         ) {
-            // Card Header
+            // Header bar
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "PASS ${String.format(Locale.US, "%02d", pass.passNumber)}",
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.accentPrimary,
-                    letterSpacing = 0.5.sp
-                )
-
-                // Edit Action
-                Box(
-                    modifier = Modifier
-                        .background(colors.surfaceVariant.copy(alpha = 0.6f), RoundedCornerShape(6.dp))
-                        .clickable { onEditClick() }
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit Die",
-                            tint = colors.textPrimary,
-                            modifier = Modifier.size(12.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "Edit",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = colors.textPrimary
-                        )
-                    }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.TableChart,
+                        contentDescription = null,
+                        tint = colors.accentPrimary,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "DIE SCHEDULE",
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = colors.textPrimary,
+                        letterSpacing = 1.sp
+                    )
                 }
+
+                Text(
+                    text = "Tap row for CAD/Details",
+                    fontSize = 11.sp,
+                    color = colors.textSecondary
+                )
             }
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Die Transition Flow (Large & Readable!)
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = String.format(Locale.US, "%.3f mm", pass.fromDie),
-                    fontFamily = FontFamily.Monospace,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.textPrimary
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-                Icon(
-                    imageVector = Icons.Default.South,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                    tint = colors.accentPrimary
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-                Text(
-                    text = String.format(Locale.US, "%.3f mm", pass.toDie),
-                    fontFamily = FontFamily.Monospace,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = colors.accentPrimary
-                )
-            }
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Metrics Row
-            Row(
+            // Horizontally Scrollable Table Container
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(colors.background.copy(alpha = 0.5f), RoundedCornerShape(8.dp))
-                    .padding(vertical = 8.dp, horizontal = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .horizontalScroll(scrollState)
             ) {
-                MetricColumn(label = "Elongation", value = String.format(Locale.US, "%.2f%%", pass.elongationPercent), colors = colors, isPrimary = true)
-                MetricColumn(label = "Reduction", value = String.format(Locale.US, "%.2f%%", pass.areaReductionPercent), colors = colors)
-                MetricColumn(label = "Ratio", value = String.format(Locale.US, "%.3f", pass.reductionRatio), colors = colors)
+                Column {
+                    // Column Header Row
+                    Row(
+                        modifier = Modifier
+                            .background(
+                                colors.surfaceVariant.copy(alpha = 0.7f),
+                                RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+                            )
+                            .padding(vertical = 10.dp, horizontal = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        HeaderCell(text = "PASS", width = 48.dp, colors = colors, align = TextAlign.Center)
+                        HeaderCell(text = "DIES (mm)", width = 118.dp, colors = colors, align = TextAlign.Center)
+                        HeaderCell(text = "ELONG %", width = 76.dp, colors = colors, align = TextAlign.End)
+                        HeaderCell(text = "RED %", width = 68.dp, colors = colors, align = TextAlign.End)
+                        HeaderCell(text = "RATIO", width = 58.dp, colors = colors, align = TextAlign.End)
+                        HeaderCell(text = "EDIT", width = 42.dp, colors = colors, align = TextAlign.Center)
+                    }
+
+                    // Table Data Rows
+                    passes.forEachIndexed { index, pass ->
+                        val isZebra = index % 2 == 1
+                        val rowBg = if (isZebra) colors.background.copy(alpha = 0.5f) else Color.Transparent
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(rowBg)
+                                .clickable { onPassClick(pass) }
+                                .padding(vertical = 8.dp, horizontal = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            // Pass #
+                            Text(
+                                text = String.format(Locale.US, "#%02d", pass.passNumber),
+                                modifier = Modifier.width(48.dp),
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.accentPrimary,
+                                textAlign = TextAlign.Center
+                            )
+
+                            // From -> To
+                            Row(
+                                modifier = Modifier.width(118.dp),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = String.format(Locale.US, "%.3f", pass.fromDie),
+                                    fontFamily = FontFamily.Monospace,
+                                    fontSize = 12.sp,
+                                    color = colors.textSecondary
+                                )
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                    contentDescription = null,
+                                    tint = colors.accentPrimary.copy(alpha = 0.7f),
+                                    modifier = Modifier.size(10.dp).padding(horizontal = 1.dp)
+                                )
+                                Text(
+                                    text = String.format(Locale.US, "%.3f", pass.toDie),
+                                    fontFamily = FontFamily.Monospace,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = colors.textPrimary
+                                )
+                            }
+
+                            // Elongation %
+                            val isElongHigh = pass.elongationPercent > 35.0
+                            val isElongLow = pass.elongationPercent < 10.0
+                            val elongColor = when {
+                                isElongHigh -> Color(0xFFEF4444)
+                                isElongLow -> Color(0xFFF59E0B)
+                                else -> colors.accentPrimary
+                            }
+                            Text(
+                                text = String.format(Locale.US, "%.2f%%", pass.elongationPercent),
+                                modifier = Modifier.width(76.dp),
+                                fontFamily = FontFamily.Monospace,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = elongColor,
+                                textAlign = TextAlign.End
+                            )
+
+                            // Reduction %
+                            Text(
+                                text = String.format(Locale.US, "%.2f%%", pass.areaReductionPercent),
+                                modifier = Modifier.width(68.dp),
+                                fontFamily = FontFamily.Monospace,
+                                fontSize = 12.sp,
+                                color = colors.textPrimary,
+                                textAlign = TextAlign.End
+                            )
+
+                            // Ratio
+                            Text(
+                                text = String.format(Locale.US, "%.3f", pass.reductionRatio),
+                                modifier = Modifier.width(58.dp),
+                                fontFamily = FontFamily.Monospace,
+                                fontSize = 12.sp,
+                                color = colors.textSecondary,
+                                textAlign = TextAlign.End
+                            )
+
+                            // Quick Edit Action
+                            Box(
+                                modifier = Modifier
+                                    .width(42.dp)
+                                    .clickable { onEditPassClick(pass) },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = "Edit pass #${pass.passNumber}",
+                                    tint = colors.accentPrimary.copy(alpha = 0.8f),
+                                    modifier = Modifier.size(14.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    // Total / Average Summary Footer Row
+                    Row(
+                        modifier = Modifier
+                            .background(
+                                colors.surfaceVariant.copy(alpha = 0.4f),
+                                RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)
+                            )
+                            .padding(vertical = 9.dp, horizontal = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "AVG / TOT",
+                            modifier = Modifier.width(166.dp),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.textSecondary,
+                            textAlign = TextAlign.Start
+                        )
+
+                        Text(
+                            text = String.format(Locale.US, "%.2f%%", stats.avgElongationPercent),
+                            modifier = Modifier.width(76.dp),
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.accentPrimary,
+                            textAlign = TextAlign.End
+                        )
+
+                        Text(
+                            text = String.format(Locale.US, "%.2f%%", stats.overallAreaReductionPercent),
+                            modifier = Modifier.width(68.dp),
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = colors.textPrimary,
+                            textAlign = TextAlign.End
+                        )
+
+                        Text(
+                            text = String.format(Locale.US, "%.3f", stats.overallReductionRatio),
+                            modifier = Modifier.width(58.dp),
+                            fontFamily = FontFamily.Monospace,
+                            fontSize = 11.sp,
+                            color = colors.textSecondary,
+                            textAlign = TextAlign.End
+                        )
+
+                        Spacer(modifier = Modifier.width(42.dp))
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-private fun MetricColumn(
-    label: String,
-    value: String,
+private fun HeaderCell(
+    text: String,
+    width: androidx.compose.ui.unit.Dp,
     colors: CalculatorColors,
-    isPrimary: Boolean = false
+    align: TextAlign = TextAlign.Start
 ) {
-    Column {
-        Text(
-            text = label,
-            fontSize = 10.sp,
-            color = colors.textSecondary,
-            fontWeight = FontWeight.Medium
-        )
-        Spacer(modifier = Modifier.height(2.dp))
-        Text(
-            text = value,
-            fontFamily = FontFamily.Monospace,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.Bold,
-            color = if (isPrimary) colors.accentPrimary else colors.textPrimary
-        )
-    }
+    Text(
+        text = text,
+        modifier = Modifier
+            .width(width)
+            .padding(horizontal = 2.dp),
+        fontSize = 11.sp,
+        fontWeight = FontWeight.Bold,
+        color = colors.textSecondary,
+        textAlign = align,
+        letterSpacing = 0.5.sp
+    )
 }
+
