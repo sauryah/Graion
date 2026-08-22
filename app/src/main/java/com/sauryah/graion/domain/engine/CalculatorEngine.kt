@@ -114,12 +114,16 @@ class CalculatorEngine(
         return value.multiply(percent, mathContext).divide(BigDecimal("100"), mathContext)
     }
 
-    private fun trigResult(compute: () -> Double): BigDecimal {
-        val result = compute()
-        return if (result.isNaN() || result.isInfinite()) {
-            BigDecimal.ZERO
-        } else {
-            BigDecimal.valueOf(result)
+    private fun trigResult(compute: () -> Double): BigDecimal? {
+        return try {
+            val result = compute()
+            if (result.isNaN() || result.isInfinite()) {
+                null
+            } else {
+                BigDecimal.valueOf(result)
+            }
+        } catch (e: Exception) {
+            null
         }
     }
 
@@ -298,33 +302,57 @@ class CalculatorEngine(
                 TokenType.SIN -> {
                     if (stack.isEmpty()) return EvaluationResult.Error.MalformedExpression
                     val top = stack.pop()
-                    stack.push(StackValue(trigResult { Math.sin(Math.toRadians(top.value.toDouble())) }, fromPercent = false))
+                    val deg = top.value.toDouble()
+                    val res = trigResult {
+                        val rad = Math.toRadians(deg)
+                        val v = Math.sin(rad)
+                        if (kotlin.math.abs(v) < 1e-14) 0.0 else v
+                    } ?: return EvaluationResult.Error.Undefined
+                    stack.push(StackValue(res, fromPercent = false))
                 }
 
                 TokenType.COS -> {
                     if (stack.isEmpty()) return EvaluationResult.Error.MalformedExpression
                     val top = stack.pop()
-                    stack.push(StackValue(trigResult { Math.cos(Math.toRadians(top.value.toDouble())) }, fromPercent = false))
+                    val deg = top.value.toDouble()
+                    val res = trigResult {
+                        val rad = Math.toRadians(deg)
+                        val v = Math.cos(rad)
+                        if (kotlin.math.abs(v) < 1e-14) 0.0 else v
+                    } ?: return EvaluationResult.Error.Undefined
+                    stack.push(StackValue(res, fromPercent = false))
                 }
 
                 TokenType.TAN -> {
                     if (stack.isEmpty()) return EvaluationResult.Error.MalformedExpression
                     val top = stack.pop()
-                    stack.push(StackValue(trigResult { Math.tan(Math.toRadians(top.value.toDouble())) }, fromPercent = false))
+                    val deg = top.value.toDouble()
+                    val mod180 = kotlin.math.abs((deg - 90.0) % 180.0)
+                    if (mod180 < 1e-9 || kotlin.math.abs(mod180 - 180.0) < 1e-9) {
+                        return EvaluationResult.Error.Undefined
+                    }
+                    val res = trigResult {
+                        val rad = Math.toRadians(deg)
+                        val v = Math.tan(rad)
+                        if (kotlin.math.abs(v) < 1e-14) 0.0 else v
+                    } ?: return EvaluationResult.Error.Undefined
+                    stack.push(StackValue(res, fromPercent = false))
                 }
 
                 TokenType.LN -> {
                     if (stack.isEmpty()) return EvaluationResult.Error.MalformedExpression
                     val top = stack.pop()
-                    if (top.value.signum() <= 0) return EvaluationResult.Error.MalformedExpression
-                    stack.push(StackValue(trigResult { Math.log(top.value.toDouble()) }, fromPercent = false))
+                    if (top.value.signum() <= 0) return EvaluationResult.Error.Undefined
+                    val res = trigResult { Math.log(top.value.toDouble()) } ?: return EvaluationResult.Error.Undefined
+                    stack.push(StackValue(res, fromPercent = false))
                 }
 
                 TokenType.LOG -> {
                     if (stack.isEmpty()) return EvaluationResult.Error.MalformedExpression
                     val top = stack.pop()
-                    if (top.value.signum() <= 0) return EvaluationResult.Error.MalformedExpression
-                    stack.push(StackValue(trigResult { Math.log10(top.value.toDouble()) }, fromPercent = false))
+                    if (top.value.signum() <= 0) return EvaluationResult.Error.Undefined
+                    val res = trigResult { Math.log10(top.value.toDouble()) } ?: return EvaluationResult.Error.Undefined
+                    stack.push(StackValue(res, fromPercent = false))
                 }
 
                 TokenType.LEFT_PAREN, TokenType.RIGHT_PAREN -> {

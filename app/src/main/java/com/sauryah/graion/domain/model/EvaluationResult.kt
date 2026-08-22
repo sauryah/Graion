@@ -19,6 +19,10 @@ sealed interface EvaluationResult {
             override val userMessage: String = "Invalid expression"
         }
 
+        data object Undefined : Error {
+            override val userMessage: String = "Undefined"
+        }
+
         data object EmptyExpression : Error {
             override val userMessage: String = ""
         }
