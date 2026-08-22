@@ -44,6 +44,7 @@ abstract class CalculatorDatabase : RoomDatabase() {
                     "calculator_history.db"
                 )
                 .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
                 .build()
                 INSTANCE = instance
                 instance
