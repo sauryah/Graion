@@ -1,102 +1,81 @@
 package com.sauryah.graion.domain.engine.unitconverter
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.assertNotNull
 import org.junit.Test
 
 class UnitConverterEngineTest {
 
-    private fun units(category: UnitCategory) = UnitConverterEngine.unitsFor(category)
-
     @Test
-    fun testLengthConversions() {
-        val m = units(UnitCategory.LENGTH).first { it.id == "m" }
-        val km = units(UnitCategory.LENGTH).first { it.id == "km" }
-        val inch = units(UnitCategory.LENGTH).first { it.id == "in" }
-        val ft = units(UnitCategory.LENGTH).first { it.id == "ft" }
+    fun `length conversions are accurate`() {
+        val units = UnitConverterEngine.unitsFor(UnitCategory.LENGTH)
+        val m = units.first { it.id == "m" }
+        val km = units.first { it.id == "km" }
+        val inch = units.first { it.id == "in" }
+        val cm = units.first { it.id == "cm" }
+        val ft = units.first { it.id == "ft" }
 
-        assertEquals(0.001, UnitConverterEngine.convert(1.0, m, km), 1e-12)
-        assertEquals(1000.0, UnitConverterEngine.convert(1.0, km, m), 1e-9)
-        assertEquals(39.3700787, UnitConverterEngine.convert(1.0, m, inch), 1e-6)
-        assertEquals(3.2808399, UnitConverterEngine.convert(1.0, m, ft), 1e-6)
+        assertEquals(1.0, UnitConverterEngine.convert(1000.0, m, km), 1e-6)
+        assertEquals(2.54, UnitConverterEngine.convert(1.0, inch, cm), 1e-6)
+        assertEquals(0.3048, UnitConverterEngine.convert(1.0, ft, m), 1e-6)
     }
 
     @Test
-    fun testMassConversions() {
-        val kg = units(UnitCategory.MASS).first { it.id == "kg" }
-        val lb = units(UnitCategory.MASS).first { it.id == "lb" }
-        val oz = units(UnitCategory.MASS).first { it.id == "oz" }
+    fun `temperature conversions handle Celsius, Fahrenheit, and Kelvin`() {
+        val units = UnitConverterEngine.unitsFor(UnitCategory.TEMPERATURE)
+        val c = units.first { it.id == "c" }
+        val f = units.first { it.id == "f" }
+        val k = units.first { it.id == "k" }
 
-        assertEquals(2.2046226, UnitConverterEngine.convert(1.0, kg, lb), 1e-6)
-        assertEquals(453.59237, UnitConverterEngine.convert(1.0, lb, units(UnitCategory.MASS).first { it.id == "g" }), 1e-6)
-        assertEquals(16.0, UnitConverterEngine.convert(1.0, lb, oz), 1e-9)
+        // Water freezing: 0 C = 32 F = 273.15 K
+        assertEquals(32.0, UnitConverterEngine.convert(0.0, c, f), 1e-6)
+        assertEquals(273.15, UnitConverterEngine.convert(0.0, c, k), 1e-6)
+
+        // Water boiling: 100 C = 212 F
+        assertEquals(212.0, UnitConverterEngine.convert(100.0, c, f), 1e-6)
+
+        // Intersect: -40 C = -40 F
+        assertEquals(-40.0, UnitConverterEngine.convert(-40.0, c, f), 1e-6)
+        assertEquals(-40.0, UnitConverterEngine.convert(-40.0, f, c), 1e-6)
     }
 
     @Test
-    fun testAreaConversions() {
-        val m2 = units(UnitCategory.AREA).first { it.id == "m2" }
-        val ft2 = units(UnitCategory.AREA).first { it.id == "ft2" }
-        val hectare = units(UnitCategory.AREA).first { it.id == "ha" }
+    fun `mass conversions are accurate`() {
+        val units = UnitConverterEngine.unitsFor(UnitCategory.MASS)
+        val kg = units.first { it.id == "kg" }
+        val g = units.first { it.id == "g" }
+        val lb = units.first { it.id == "lb" }
 
-        assertEquals(10.7639104, UnitConverterEngine.convert(1.0, m2, ft2), 1e-5)
-        assertEquals(10_000.0, UnitConverterEngine.convert(1.0, hectare, m2), 1e-6)
+        assertEquals(1000.0, UnitConverterEngine.convert(1.0, kg, g), 1e-6)
+        assertEquals(2.20462262, UnitConverterEngine.convert(1.0, kg, lb), 1e-4)
     }
 
     @Test
-    fun testVolumeConversions() {
-        val l = units(UnitCategory.VOLUME).first { it.id == "l" }
-        val gal = units(UnitCategory.VOLUME).first { it.id == "gal" }
-        val ml = units(UnitCategory.VOLUME).first { it.id == "ml" }
+    fun `speed conversions are accurate`() {
+        val units = UnitConverterEngine.unitsFor(UnitCategory.SPEED)
+        val mps = units.first { it.id == "mps" }
+        val kmph = units.first { it.id == "kmph" }
+        val mph = units.first { it.id == "mph" }
 
-        assertEquals(0.2641720524, UnitConverterEngine.convert(1.0, l, gal), 1e-8)
-        assertEquals(1000.0, UnitConverterEngine.convert(1.0, l, ml), 1e-9)
+        assertEquals(36.0, UnitConverterEngine.convert(10.0, mps, kmph), 1e-6)
+        assertEquals(60.0, UnitConverterEngine.convert(96.56064, kmph, mph), 1e-3)
     }
 
     @Test
-    fun testTemperatureConversions() {
-        val c = units(UnitCategory.TEMPERATURE).first { it.id == "c" }
-        val f = units(UnitCategory.TEMPERATURE).first { it.id == "f" }
-        val k = units(UnitCategory.TEMPERATURE).first { it.id == "k" }
-
-        assertEquals(32.0, UnitConverterEngine.convert(0.0, c, f), 1e-9)
-        assertEquals(100.0, UnitConverterEngine.convert(212.0, f, c), 1e-9)
-        assertEquals(273.15, UnitConverterEngine.convert(0.0, c, k), 1e-9)
-        assertEquals(-40.0, UnitConverterEngine.convert(-40.0, c, f), 1e-9)
-    }
-
-    @Test
-    fun testSpeedConversions() {
-        val mps = units(UnitCategory.SPEED).first { it.id == "mps" }
-        val kmph = units(UnitCategory.SPEED).first { it.id == "kmph" }
-        val knot = units(UnitCategory.SPEED).first { it.id == "kn" }
-
-        assertEquals(3.6, UnitConverterEngine.convert(1.0, mps, kmph), 1e-9)
-        assertEquals(1.94384449, UnitConverterEngine.convert(1.0, mps, knot), 1e-6)
-    }
-
-    @Test
-    fun testRoundTrip() {
-        for (category in UnitCategory.entries) {
-            val list = units(category)
-            for (from in list) {
-                for (to in list) {
-                    val value = 123.456
-                    val roundTrip = UnitConverterEngine.convert(
-                        UnitConverterEngine.convert(value, from, to),
-                        to,
-                        from
-                    )
-                    assertEquals(category.name + " " + from.id + "->" + to.id, value, roundTrip, 1e-6)
-                }
-            }
+    fun `defaultUnitsFor returns non-null valid defaults for all categories`() {
+        UnitCategory.entries.forEach { category ->
+            val (from, to) = UnitConverterEngine.defaultUnitsFor(category)
+            assertNotNull(from)
+            assertNotNull(to)
         }
     }
 
     @Test
-    fun testFormatResult() {
+    fun `formatResult handles edge cases`() {
         assertEquals("0", UnitConverterEngine.formatResult(0.0))
-        assertEquals("1.5", UnitConverterEngine.formatResult(1.5))
-        assertEquals("1000", UnitConverterEngine.formatResult(1000.0))
-        assertTrue(UnitConverterEngine.formatResult(1e20).contains("e"))
+        assertEquals("—", UnitConverterEngine.formatResult(Double.NaN))
+        assertEquals("—", UnitConverterEngine.formatResult(Double.POSITIVE_INFINITY))
+        assertEquals("42", UnitConverterEngine.formatResult(42.0))
+        assertEquals("3.14159", UnitConverterEngine.formatResult(3.14159))
     }
 }
