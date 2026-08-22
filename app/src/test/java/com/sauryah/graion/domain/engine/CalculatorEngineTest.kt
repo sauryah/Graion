@@ -325,6 +325,20 @@ class CalculatorEngineTest {
         assertTrue(result4 is EvaluationResult.Success)
         assertEquals("1", (result4 as EvaluationResult.Success).formatted)
 
+        val resultCos90 = engine.evaluate("cos(90)")
+        assertTrue(resultCos90 is EvaluationResult.Success)
+        assertEquals("0", (resultCos90 as EvaluationResult.Success).formatted)
+
+        val resultSin180 = engine.evaluate("sin(180)")
+        assertTrue(resultSin180 is EvaluationResult.Success)
+        assertEquals("0", (resultSin180 as EvaluationResult.Success).formatted)
+
+        val resultTan90 = engine.evaluate("tan(90)")
+        assertTrue(resultTan90 is EvaluationResult.Error.Undefined)
+
+        val resultTan270 = engine.evaluate("tan(270)")
+        assertTrue(resultTan270 is EvaluationResult.Error.Undefined)
+
         // Nested + implicit multiplication
         val result5 = engine.evaluate("2sin(30)")
         assertTrue(result5 is EvaluationResult.Success)
