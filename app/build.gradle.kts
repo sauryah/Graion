@@ -6,6 +6,7 @@ plugins {
   alias(libs.plugins.compose.compiler)
   alias(libs.plugins.kotlin.serialization)
   alias(libs.plugins.ksp)
+  id("com.chaquo.python")
 }
 
 android {
@@ -17,6 +18,10 @@ android {
         targetSdk = 36
         versionCode = 3
         versionName = "1.0.2"
+
+        ndk {
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")
+        }
     }
 
     val keystorePropertiesFile = rootProject.file("keystore.properties")
