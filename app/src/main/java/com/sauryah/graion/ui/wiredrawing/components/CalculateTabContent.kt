@@ -22,7 +22,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Calculate
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.South
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.ui.platform.LocalContext
+import com.sauryah.graion.domain.engine.wiredrawing.WireDrawingExportHelper
+import com.sauryah.graion.ui.util.ShareHelper
 import androidx.compose.material.icons.filled.TableChart
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.ViewAgenda
@@ -264,6 +267,7 @@ private fun PassScheduleTableCard(
     onPassClick: (PassResult) -> Unit,
     onEditPassClick: (PassResult) -> Unit
 ) {
+    val context = LocalContext.current
     val scrollState = rememberScrollState()
 
     Card(
@@ -300,11 +304,28 @@ private fun PassScheduleTableCard(
                     )
                 }
 
-                Text(
-                    text = "Tap row for CAD/Details",
-                    fontSize = 11.sp,
-                    color = colors.textSecondary
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Tap row for CAD",
+                        fontSize = 11.sp,
+                        color = colors.textSecondary
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    IconButton(
+                        onClick = {
+                            val report = WireDrawingExportHelper.generateTextReport(passes, stats)
+                            ShareHelper.shareContent(context, "Export Schedule", report)
+                        },
+                        modifier = Modifier.size(28.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = "Share schedule report",
+                            tint = colors.accentPrimary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(10.dp))
