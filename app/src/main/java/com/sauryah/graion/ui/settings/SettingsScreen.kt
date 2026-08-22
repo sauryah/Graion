@@ -53,6 +53,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -125,7 +126,8 @@ fun SettingsScreen(
                         text = "Settings",
                         color = colors.textPrimary,
                         fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.semantics { heading() }
                     )
                 },
                 navigationIcon = {
@@ -374,7 +376,9 @@ private fun SettingsSectionHeader(title: String) {
         fontSize = 12.sp,
         fontWeight = FontWeight.Bold,
         letterSpacing = 1.sp,
-        modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+        modifier = Modifier
+            .padding(horizontal = 4.dp, vertical = 2.dp)
+            .semantics { heading() }
     )
 }
 
