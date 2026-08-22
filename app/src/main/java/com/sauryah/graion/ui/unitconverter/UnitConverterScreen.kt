@@ -16,7 +16,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.widget.Toast
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -68,6 +79,14 @@ fun UnitConverterScreen(
     val inputValue = input.toDoubleOrNull() ?: 0.0
     val converted = UnitConverterEngine.convert(inputValue, fromUnit, toUnit)
 
+    val context = LocalContext.current
+    var isSwapped by remember { mutableStateOf(false) }
+    val swapRotation by animateFloatAsState(
+        targetValue = if (isSwapped) 180f else 0f,
+        animationSpec = tween(300),
+        label = "swap_rotation"
+    )
+
     fun switchCategory(newCategory: UnitCategory) {
         if (newCategory == category) return
         category = newCategory
@@ -86,7 +105,8 @@ fun UnitConverterScreen(
                         text = "Unit Converter",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = colors.textPrimary
+                        color = colors.textPrimary,
+                        modifier = Modifier.semantics { heading() }
                     )
                 },
                 navigationIcon = {
@@ -142,9 +162,21 @@ fun UnitConverterScreen(
                                     input = newValue
                                 }
                             },
+                            trailingIcon = {
+                                if (input.isNotEmpty() && input != "0") {
+                                    IconButton(onClick = { input = "" }) {
+                                        Icon(
+                                            imageVector = Icons.Default.Clear,
+                                            contentDescription = "Clear input",
+                                            tint = colors.textSecondary,
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                    }
+                                }
+                            },
                             modifier = Modifier.weight(1f),
                             singleLine = true,
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                            keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             textStyle = androidx.compose.ui.text.TextStyle(
                                 fontSize = 28.sp,
                                 fontWeight = FontWeight.SemiBold,
@@ -180,8 +212,11 @@ fun UnitConverterScreen(
                         val tmp = fromUnit
                         fromUnit = toUnit
                         toUnit = tmp
+                        isSwapped = !isSwapped
                     },
-                    modifier = Modifier.size(52.dp)
+                    modifier = Modifier
+                        .size(52.dp)
+                        .rotate(swapRotation)
                 ) {
                     Icon(
                         imageVector = Icons.Filled.SwapHoriz,
@@ -208,13 +243,31 @@ fun UnitConverterScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
+                        val formattedResult = UnitConverterEngine.formatResult(converted)
                         Text(
-                            text = UnitConverterEngine.formatResult(converted),
+                            text = formattedResult,
                             fontSize = 28.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = colors.accentPrimary,
                             modifier = Modifier.weight(1f)
                         )
+                        IconButton(
+                            onClick = {
+                                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                                val clip = ClipData.newPlainText("Converted Value", "$formattedResult ${toUnit.symbol}")
+                                clipboard?.setPrimaryClip(clip)
+                                Toast.makeText(context, "Copied $formattedResult ${toUnit.symbol}", Toast.LENGTH_SHORT).show()
+                            },
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ContentCopy,
+                                contentDescription = "Copy converted value",
+                                tint = colors.textSecondary,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(4.dp))
                         UnitDropdown(
                             units = UnitConverterEngine.unitsFor(category),
                             selected = toUnit,
