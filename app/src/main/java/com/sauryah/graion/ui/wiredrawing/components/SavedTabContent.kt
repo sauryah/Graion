@@ -17,8 +17,8 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.CompareArrows
 import androidx.compose.material.icons.filled.BookmarkBorder
-import androidx.compose.material.icons.filled.CompareArrows
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.FileDownload
@@ -102,7 +102,7 @@ fun LazyListScope.savedTabContent(
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = colors.textPrimary),
                 modifier = Modifier.weight(1f).height(44.dp)
             ) {
-                Icon(imageVector = Icons.Default.CompareArrows, contentDescription = null, modifier = Modifier.size(16.dp), tint = colors.textPrimary)
+                Icon(imageVector = Icons.AutoMirrored.Filled.CompareArrows, contentDescription = null, modifier = Modifier.size(16.dp), tint = colors.textPrimary)
                 Spacer(modifier = Modifier.width(6.dp))
                 Text("Compare", fontSize = 13.sp, fontWeight = FontWeight.SemiBold)
             }
