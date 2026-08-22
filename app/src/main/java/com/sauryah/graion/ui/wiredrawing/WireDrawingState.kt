@@ -18,7 +18,8 @@ enum class WireDrawingBottomNav(val title: String) {
 
 enum class AnalysisChartType(val title: String) {
     ELONGATION("Elongation %"),
-    AREA_REDUCTION("Area Reduction %")
+    AREA_REDUCTION("Reduction %"),
+    DIE_DIAMETER("Die Sizes")
 }
 
 @Immutable
