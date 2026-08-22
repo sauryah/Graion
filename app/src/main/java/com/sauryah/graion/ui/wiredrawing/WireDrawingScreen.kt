@@ -40,6 +40,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import com.sauryah.graion.theme.LocalCalculatorColors
 import com.sauryah.graion.ui.wiredrawing.components.ConsistencyDetailDialog
 import com.sauryah.graion.ui.wiredrawing.components.DieSeriesGeneratorDialog
@@ -85,7 +87,8 @@ fun WireDrawingScreen(
                         text = "Wire Drawing",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = colors.textPrimary
+                        color = colors.textPrimary,
+                        modifier = Modifier.semantics { heading() }
                     )
                 },
                 navigationIcon = {
