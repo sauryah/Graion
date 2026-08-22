@@ -223,6 +223,7 @@ private fun HistoryCard(
     onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val formattedDate = remember(record.timestamp) {
         SharedDateFormatter.format(Date(record.timestamp))
     }
