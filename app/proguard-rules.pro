@@ -1,4 +1,4 @@
-# ProGuard & R8 configuration rules for Lical
+# ProGuard & R8 configuration rules for Graion
 
 # Kotlinx Serialization
 -keepattributes *Annotation*, InnerClasses
