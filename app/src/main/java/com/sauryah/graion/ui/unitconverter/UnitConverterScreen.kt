@@ -309,12 +309,16 @@ private fun CategoryChips(
             val isSelected = cat == selected
             Box(
                 modifier = Modifier
+                    .clip(RoundedCornerShape(20.dp))
                     .background(
                         color = if (isSelected) colors.accentPrimary else colors.surfaceVariant.copy(alpha = 0.6f),
                         shape = RoundedCornerShape(20.dp)
                     )
                     .clickable { onSelect(cat) }
                     .padding(horizontal = 14.dp, vertical = 8.dp)
+                    .semantics {
+                        contentDescription = "${cat.displayName} category, ${if (isSelected) "selected" else "not selected"}"
+                    }
             ) {
                 Text(
                     text = cat.displayName,

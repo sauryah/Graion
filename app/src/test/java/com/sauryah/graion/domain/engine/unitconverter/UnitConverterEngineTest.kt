@@ -62,6 +62,33 @@ class UnitConverterEngineTest {
     }
 
     @Test
+    fun `pressure conversions are accurate`() {
+        val units = UnitConverterEngine.unitsFor(UnitCategory.PRESSURE)
+        val pa = units.first { it.id == "pa" }
+        val bar = units.first { it.id == "bar" }
+        val mpa = units.first { it.id == "mpa" }
+        val psi = units.first { it.id == "psi" }
+        val atm = units.first { it.id == "atm" }
+
+        assertEquals(1.0, UnitConverterEngine.convert(100_000.0, pa, bar), 1e-6)
+        assertEquals(1.0, UnitConverterEngine.convert(1_000_000.0, pa, mpa), 1e-6)
+        assertEquals(14.50377, UnitConverterEngine.convert(1.0, bar, psi), 1e-4)
+        assertEquals(101325.0, UnitConverterEngine.convert(1.0, atm, pa), 1e-3)
+    }
+
+    @Test
+    fun `power conversions are accurate`() {
+        val units = UnitConverterEngine.unitsFor(UnitCategory.POWER)
+        val w = units.first { it.id == "w" }
+        val kw = units.first { it.id == "kw" }
+        val hp = units.first { it.id == "hp" }
+
+        assertEquals(1.0, UnitConverterEngine.convert(1000.0, w, kw), 1e-6)
+        assertEquals(1.34102, UnitConverterEngine.convert(1.0, kw, hp), 1e-4)
+        assertEquals(745.69987, UnitConverterEngine.convert(1.0, hp, w), 1e-3)
+    }
+
+    @Test
     fun `defaultUnitsFor returns non-null valid defaults for all categories`() {
         UnitCategory.entries.forEach { category ->
             val (from, to) = UnitConverterEngine.defaultUnitsFor(category)

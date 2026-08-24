@@ -9,7 +9,9 @@ enum class UnitCategory(val displayName: String) {
     AREA("Area"),
     VOLUME("Volume"),
     TEMPERATURE("Temperature"),
-    SPEED("Speed")
+    SPEED("Speed"),
+    PRESSURE("Pressure"),
+    POWER("Power")
 }
 
 data class UnitDefinition(
@@ -79,13 +81,36 @@ object UnitConverterEngine {
         UnitDefinition("fps", "ft/s", "Foot per second", { it * 0.3048 }, { it / 0.3048 })
     )
 
+    private val pressureUnits = listOf(
+        UnitDefinition("pa", "Pa", "Pascal", { it }, { it }),
+        UnitDefinition("kpa", "kPa", "Kilopascal", { it * 1000.0 }, { it / 1000.0 }),
+        UnitDefinition("bar", "bar", "Bar", { it * 100_000.0 }, { it / 100_000.0 }),
+        UnitDefinition("psi", "psi", "Pound per square inch", { it * 6894.757293168 }, { it / 6894.757293168 }),
+        UnitDefinition("mpa", "MPa", "Megapascal", { it * 1_000_000.0 }, { it / 1_000_000.0 }),
+        UnitDefinition("gpa", "GPa", "Gigapascal", { it * 1_000_000_000.0 }, { it / 1_000_000_000.0 }),
+        UnitDefinition("atm", "atm", "Standard Atmosphere", { it * 101325.0 }, { it / 101325.0 }),
+        UnitDefinition("torr", "Torr", "Torr / mmHg", { it * 133.322387415 }, { it / 133.322387415 })
+    )
+
+    private val powerUnits = listOf(
+        UnitDefinition("w", "W", "Watt", { it }, { it }),
+        UnitDefinition("kw", "kW", "Kilowatt", { it * 1000.0 }, { it / 1000.0 }),
+        UnitDefinition("mw", "MW", "Megawatt", { it * 1_000_000.0 }, { it / 1_000_000.0 }),
+        UnitDefinition("hp", "hp", "Horsepower (Mechanical)", { it * 745.69987158227022 }, { it / 745.69987158227022 }),
+        UnitDefinition("cals", "cal/s", "Calorie per second", { it * 4.184 }, { it / 4.184 }),
+        UnitDefinition("kcalh", "kcal/h", "Kilocalorie per hour", { it * 1.163 }, { it / 1.163 }),
+        UnitDefinition("btuh", "BTU/h", "BTU per hour", { it * 0.29307107 }, { it / 0.29307107 })
+    )
+
     private val unitsByCategory: Map<UnitCategory, List<UnitDefinition>> = mapOf(
         UnitCategory.LENGTH to lengthUnits,
         UnitCategory.MASS to massUnits,
         UnitCategory.AREA to areaUnits,
         UnitCategory.VOLUME to volumeUnits,
         UnitCategory.TEMPERATURE to temperatureUnits,
-        UnitCategory.SPEED to speedUnits
+        UnitCategory.SPEED to speedUnits,
+        UnitCategory.PRESSURE to pressureUnits,
+        UnitCategory.POWER to powerUnits
     )
 
     fun unitsFor(category: UnitCategory): List<UnitDefinition> = unitsByCategory.getValue(category)
@@ -99,6 +124,8 @@ object UnitConverterEngine {
             UnitCategory.VOLUME -> units.first { it.id == "l" }
             UnitCategory.TEMPERATURE -> units.first { it.id == "c" }
             UnitCategory.SPEED -> units.first { it.id == "mps" }
+            UnitCategory.PRESSURE -> units.first { it.id == "bar" }
+            UnitCategory.POWER -> units.first { it.id == "kw" }
         }
         val to = when (category) {
             UnitCategory.LENGTH -> units.first { it.id == "km" }
@@ -107,6 +134,8 @@ object UnitConverterEngine {
             UnitCategory.VOLUME -> units.first { it.id == "gal" }
             UnitCategory.TEMPERATURE -> units.first { it.id == "f" }
             UnitCategory.SPEED -> units.first { it.id == "kmph" }
+            UnitCategory.PRESSURE -> units.first { it.id == "psi" }
+            UnitCategory.POWER -> units.first { it.id == "hp" }
         }
         return from to to
     }
