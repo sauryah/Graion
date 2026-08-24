@@ -1,5 +1,6 @@
 package com.sauryah.graion.domain.engine
 
+import com.sauryah.graion.domain.model.AngleMode
 import com.sauryah.graion.domain.model.EvaluationResult
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -369,6 +370,21 @@ class CalculatorEngineTest {
 
         val result5 = engine.evaluate("log(-5)")
         assertTrue(result5 is EvaluationResult.Error)
+    }
+
+    @Test
+    fun testTrigonometricRadiansMode() {
+        val resultSinPi = engine.evaluate("sin(π)", AngleMode.RADIANS)
+        assertTrue(resultSinPi is EvaluationResult.Success)
+        assertEquals("0", (resultSinPi as EvaluationResult.Success).formatted)
+
+        val resultSinHalfPi = engine.evaluate("sin(π / 2)", AngleMode.RADIANS)
+        assertTrue(resultSinHalfPi is EvaluationResult.Success)
+        assertEquals("1", (resultSinHalfPi as EvaluationResult.Success).formatted)
+
+        val resultCosPi = engine.evaluate("cos(π)", AngleMode.RADIANS)
+        assertTrue(resultCosPi is EvaluationResult.Success)
+        assertEquals("-1", (resultCosPi as EvaluationResult.Success).formatted)
     }
 
     @Test

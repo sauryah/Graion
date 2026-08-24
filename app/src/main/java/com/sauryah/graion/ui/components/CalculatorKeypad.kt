@@ -25,7 +25,7 @@ fun CalculatorKeypad(
     soundEnabled: Boolean = false,
     onAction: (CalculatorAction) -> Unit
 ) {
-    var functionMode by remember { mutableStateOf(false) }
+    var functionPage by remember { mutableStateOf(0) }
 
     Column(
         modifier = modifier
@@ -33,114 +33,166 @@ fun CalculatorKeypad(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        // Row -1: Scientific keys, toggled by F: π e ^ √ | sin cos tan ln
+        // Row -1: Scientific keys (Page 0: sin cos tan ln | Page 1: π e ^ √ | Page 2: log ln ^ √)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
             horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            if (functionMode) {
-                CalculatorButton(
-                    symbol = "sin",
-                    type = CalculatorButtonType.FUNCTION,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxSize(),
-                    contentDesc = "Sine",
-                    hapticsEnabled = hapticsEnabled,
-                    soundEnabled = soundEnabled,
-                    onClick = { onAction(CalculatorAction.Function(CalculatorFunction.SIN)) }
-                )
-                CalculatorButton(
-                    symbol = "cos",
-                    type = CalculatorButtonType.FUNCTION,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxSize(),
-                    contentDesc = "Cosine",
-                    hapticsEnabled = hapticsEnabled,
-                    soundEnabled = soundEnabled,
-                    onClick = { onAction(CalculatorAction.Function(CalculatorFunction.COS)) }
-                )
-                CalculatorButton(
-                    symbol = "tan",
-                    type = CalculatorButtonType.FUNCTION,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxSize(),
-                    contentDesc = "Tangent",
-                    hapticsEnabled = hapticsEnabled,
-                    soundEnabled = soundEnabled,
-                    onClick = { onAction(CalculatorAction.Function(CalculatorFunction.TAN)) }
-                )
-                CalculatorButton(
-                    symbol = "ln",
-                    type = CalculatorButtonType.FUNCTION,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxSize(),
-                    contentDesc = "Natural Logarithm",
-                    hapticsEnabled = hapticsEnabled,
-                    soundEnabled = soundEnabled,
-                    onClick = { onAction(CalculatorAction.Function(CalculatorFunction.LN)) }
-                )
-            } else {
-                CalculatorButton(
-                    symbol = "π",
-                    type = CalculatorButtonType.FUNCTION,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxSize(),
-                    contentDesc = "Pi",
-                    hapticsEnabled = hapticsEnabled,
-                    soundEnabled = soundEnabled,
-                    onClick = { onAction(CalculatorAction.Constant(CalculatorConstant.PI)) }
-                )
-                CalculatorButton(
-                    symbol = "e",
-                    type = CalculatorButtonType.FUNCTION,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxSize(),
-                    contentDesc = "Euler's number",
-                    hapticsEnabled = hapticsEnabled,
-                    soundEnabled = soundEnabled,
-                    onClick = { onAction(CalculatorAction.Constant(CalculatorConstant.EULER)) }
-                )
-                CalculatorButton(
-                    symbol = "^",
-                    type = CalculatorButtonType.OPERATOR,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxSize(),
-                    contentDesc = "Power",
-                    hapticsEnabled = hapticsEnabled,
-                    soundEnabled = soundEnabled,
-                    onClick = { onAction(CalculatorAction.Operator(CalculatorOperator.POWER)) }
-                )
-                CalculatorButton(
-                    symbol = "√",
-                    type = CalculatorButtonType.FUNCTION,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxSize(),
-                    contentDesc = "Square Root",
-                    hapticsEnabled = hapticsEnabled,
-                    soundEnabled = soundEnabled,
-                    onClick = { onAction(CalculatorAction.SquareRoot) }
-                )
+            when (functionPage) {
+                0 -> {
+                    CalculatorButton(
+                        symbol = "sin",
+                        type = CalculatorButtonType.FUNCTION,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize(),
+                        contentDesc = "Sine",
+                        hapticsEnabled = hapticsEnabled,
+                        soundEnabled = soundEnabled,
+                        onClick = { onAction(CalculatorAction.Function(CalculatorFunction.SIN)) }
+                    )
+                    CalculatorButton(
+                        symbol = "cos",
+                        type = CalculatorButtonType.FUNCTION,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize(),
+                        contentDesc = "Cosine",
+                        hapticsEnabled = hapticsEnabled,
+                        soundEnabled = soundEnabled,
+                        onClick = { onAction(CalculatorAction.Function(CalculatorFunction.COS)) }
+                    )
+                    CalculatorButton(
+                        symbol = "tan",
+                        type = CalculatorButtonType.FUNCTION,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize(),
+                        contentDesc = "Tangent",
+                        hapticsEnabled = hapticsEnabled,
+                        soundEnabled = soundEnabled,
+                        onClick = { onAction(CalculatorAction.Function(CalculatorFunction.TAN)) }
+                    )
+                    CalculatorButton(
+                        symbol = "ln",
+                        type = CalculatorButtonType.FUNCTION,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize(),
+                        contentDesc = "Natural Logarithm",
+                        hapticsEnabled = hapticsEnabled,
+                        soundEnabled = soundEnabled,
+                        onClick = { onAction(CalculatorAction.Function(CalculatorFunction.LN)) }
+                    )
+                }
+
+                1 -> {
+                    CalculatorButton(
+                        symbol = "π",
+                        type = CalculatorButtonType.FUNCTION,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize(),
+                        contentDesc = "Pi",
+                        hapticsEnabled = hapticsEnabled,
+                        soundEnabled = soundEnabled,
+                        onClick = { onAction(CalculatorAction.Constant(CalculatorConstant.PI)) }
+                    )
+                    CalculatorButton(
+                        symbol = "e",
+                        type = CalculatorButtonType.FUNCTION,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize(),
+                        contentDesc = "Euler's number",
+                        hapticsEnabled = hapticsEnabled,
+                        soundEnabled = soundEnabled,
+                        onClick = { onAction(CalculatorAction.Constant(CalculatorConstant.EULER)) }
+                    )
+                    CalculatorButton(
+                        symbol = "^",
+                        type = CalculatorButtonType.OPERATOR,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize(),
+                        contentDesc = "Power",
+                        hapticsEnabled = hapticsEnabled,
+                        soundEnabled = soundEnabled,
+                        onClick = { onAction(CalculatorAction.Operator(CalculatorOperator.POWER)) }
+                    )
+                    CalculatorButton(
+                        symbol = "√",
+                        type = CalculatorButtonType.FUNCTION,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize(),
+                        contentDesc = "Square Root",
+                        hapticsEnabled = hapticsEnabled,
+                        soundEnabled = soundEnabled,
+                        onClick = { onAction(CalculatorAction.SquareRoot) }
+                    )
+                }
+
+                else -> {
+                    CalculatorButton(
+                        symbol = "log",
+                        type = CalculatorButtonType.FUNCTION,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize(),
+                        contentDesc = "Base-10 Logarithm",
+                        hapticsEnabled = hapticsEnabled,
+                        soundEnabled = soundEnabled,
+                        onClick = { onAction(CalculatorAction.Function(CalculatorFunction.LOG)) }
+                    )
+                    CalculatorButton(
+                        symbol = "ln",
+                        type = CalculatorButtonType.FUNCTION,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize(),
+                        contentDesc = "Natural Logarithm",
+                        hapticsEnabled = hapticsEnabled,
+                        soundEnabled = soundEnabled,
+                        onClick = { onAction(CalculatorAction.Function(CalculatorFunction.LN)) }
+                    )
+                    CalculatorButton(
+                        symbol = "^",
+                        type = CalculatorButtonType.OPERATOR,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize(),
+                        contentDesc = "Power",
+                        hapticsEnabled = hapticsEnabled,
+                        soundEnabled = soundEnabled,
+                        onClick = { onAction(CalculatorAction.Operator(CalculatorOperator.POWER)) }
+                    )
+                    CalculatorButton(
+                        symbol = "√",
+                        type = CalculatorButtonType.FUNCTION,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize(),
+                        contentDesc = "Square Root",
+                        hapticsEnabled = hapticsEnabled,
+                        soundEnabled = soundEnabled,
+                        onClick = { onAction(CalculatorAction.SquareRoot) }
+                    )
+                }
             }
+
             CalculatorButton(
-                symbol = "F",
+                symbol = "𝑓x",
                 type = CalculatorButtonType.FUNCTION,
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxSize(),
-                contentDesc = if (functionMode) "Switch to constants" else "Switch to functions",
+                contentDesc = "Switch scientific function page (Page ${functionPage + 1} of 3)",
                 hapticsEnabled = hapticsEnabled,
                 soundEnabled = soundEnabled,
-                onClick = { functionMode = !functionMode }
+                onClick = { functionPage = (functionPage + 1) % 3 }
             )
         }
 

@@ -1,5 +1,6 @@
 package com.sauryah.graion.domain.engine
 
+import com.sauryah.graion.domain.model.AngleMode
 import com.sauryah.graion.domain.model.CalculatorOperator
 import com.sauryah.graion.domain.model.EvaluationResult
 import com.sauryah.graion.domain.model.Token
@@ -24,11 +25,15 @@ class CalculatorEngine(
      * Fully evaluates an expression string and returns the EvaluationResult.
      * Caches the last operation so repeated equals can continue the calculation.
      */
-    fun evaluate(rawExpression: String): EvaluationResult {
-        return evaluateInternal(rawExpression, cacheLastOperation = true)
+    fun evaluate(rawExpression: String, angleMode: AngleMode = AngleMode.DEGREES): EvaluationResult {
+        return evaluateInternal(rawExpression, cacheLastOperation = true, angleMode = angleMode)
     }
 
-    private fun evaluateInternal(rawExpression: String, cacheLastOperation: Boolean): EvaluationResult {
+    private fun evaluateInternal(
+        rawExpression: String,
+        cacheLastOperation: Boolean,
+        angleMode: AngleMode
+    ): EvaluationResult {
         val trimmed = rawExpression.trim()
         if (trimmed.isEmpty()) {
             return EvaluationResult.Error.EmptyExpression
@@ -46,7 +51,7 @@ class CalculatorEngine(
         }
 
         val rpn = parser.parseToRpn(tokens)
-        return evaluateRpn(rpn)
+        return evaluateRpn(rpn, angleMode = angleMode)
     }
 
     /**
@@ -155,12 +160,12 @@ class CalculatorEngine(
      * If the expression ends with an operator, it evaluates the part before it.
      * Never mutates the repeated-equals cache.
      */
-    fun evaluatePreview(rawExpression: String): EvaluationResult? {
+    fun evaluatePreview(rawExpression: String, angleMode: AngleMode = AngleMode.DEGREES): EvaluationResult? {
         val trimmed = rawExpression.trim()
         if (trimmed.isEmpty()) return null
 
         // Try evaluating as-is
-        val directResult = evaluateInternal(trimmed, cacheLastOperation = false)
+        val directResult = evaluateInternal(trimmed, cacheLastOperation = false, angleMode = angleMode)
         if (directResult is EvaluationResult.Success) {
             return directResult
         }
@@ -181,7 +186,7 @@ class CalculatorEngine(
         }
 
         if (sanitized.isNotEmpty() && sanitized != trimmed) {
-            val fallbackResult = evaluateInternal(sanitized, cacheLastOperation = false)
+            val fallbackResult = evaluateInternal(sanitized, cacheLastOperation = false, angleMode = angleMode)
             if (fallbackResult is EvaluationResult.Success) {
                 return fallbackResult
             }
@@ -203,7 +208,7 @@ class CalculatorEngine(
      *   a + b% = a + a*b/100, a - b% = a - a*b/100, a * b% = a*b/100, a / b% = a/(b/100)
      * A standalone b% still evaluates to b/100.
      */
-    private fun evaluateRpn(rpn: List<Token>): EvaluationResult {
+    private fun evaluateRpn(rpn: List<Token>, angleMode: AngleMode = AngleMode.DEGREES): EvaluationResult {
         if (rpn.isEmpty()) {
             return EvaluationResult.Error.EmptyExpression
         }
@@ -302,9 +307,9 @@ class CalculatorEngine(
                 TokenType.SIN -> {
                     if (stack.isEmpty()) return EvaluationResult.Error.MalformedExpression
                     val top = stack.pop()
-                    val deg = top.value.toDouble()
+                    val inputVal = top.value.toDouble()
                     val res = trigResult {
-                        val rad = Math.toRadians(deg)
+                        val rad = if (angleMode == AngleMode.DEGREES) Math.toRadians(inputVal) else inputVal
                         val v = Math.sin(rad)
                         if (kotlin.math.abs(v) < 1e-14) 0.0 else v
                     } ?: return EvaluationResult.Error.Undefined
@@ -314,9 +319,9 @@ class CalculatorEngine(
                 TokenType.COS -> {
                     if (stack.isEmpty()) return EvaluationResult.Error.MalformedExpression
                     val top = stack.pop()
-                    val deg = top.value.toDouble()
+                    val inputVal = top.value.toDouble()
                     val res = trigResult {
-                        val rad = Math.toRadians(deg)
+                        val rad = if (angleMode == AngleMode.DEGREES) Math.toRadians(inputVal) else inputVal
                         val v = Math.cos(rad)
                         if (kotlin.math.abs(v) < 1e-14) 0.0 else v
                     } ?: return EvaluationResult.Error.Undefined
@@ -326,13 +331,20 @@ class CalculatorEngine(
                 TokenType.TAN -> {
                     if (stack.isEmpty()) return EvaluationResult.Error.MalformedExpression
                     val top = stack.pop()
-                    val deg = top.value.toDouble()
-                    val mod180 = kotlin.math.abs((deg - 90.0) % 180.0)
-                    if (mod180 < 1e-9 || kotlin.math.abs(mod180 - 180.0) < 1e-9) {
-                        return EvaluationResult.Error.Undefined
+                    val inputVal = top.value.toDouble()
+                    if (angleMode == AngleMode.DEGREES) {
+                        val mod180 = kotlin.math.abs((inputVal - 90.0) % 180.0)
+                        if (mod180 < 1e-9 || kotlin.math.abs(mod180 - 180.0) < 1e-9) {
+                            return EvaluationResult.Error.Undefined
+                        }
+                    } else {
+                        val modPi = kotlin.math.abs((inputVal - (kotlin.math.PI / 2.0)) % kotlin.math.PI)
+                        if (modPi < 1e-9 || kotlin.math.abs(modPi - kotlin.math.PI) < 1e-9) {
+                            return EvaluationResult.Error.Undefined
+                        }
                     }
                     val res = trigResult {
-                        val rad = Math.toRadians(deg)
+                        val rad = if (angleMode == AngleMode.DEGREES) Math.toRadians(inputVal) else inputVal
                         val v = Math.tan(rad)
                         if (kotlin.math.abs(v) < 1e-14) 0.0 else v
                     } ?: return EvaluationResult.Error.Undefined

@@ -63,11 +63,15 @@ import com.sauryah.graion.domain.model.ThemeMode
 import com.sauryah.graion.domain.model.UserPreferences
 import com.sauryah.graion.theme.CalculatorTheme
 
+import androidx.compose.material.icons.filled.Calculate
+import com.sauryah.graion.domain.model.AngleMode
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     preferences: UserPreferences,
     onThemeChange: (ThemeMode) -> Unit,
+    onAngleModeChange: (AngleMode) -> Unit,
     onHapticsChange: (Boolean) -> Unit,
     onSoundChange: (Boolean) -> Unit,
     onClearHistory: () -> Unit,
@@ -182,6 +186,32 @@ fun SettingsScreen(
                         icon = Icons.Default.SettingsBrightness,
                         selected = preferences.themeMode == ThemeMode.SYSTEM,
                         onClick = { onThemeChange(ThemeMode.SYSTEM) }
+                    )
+                }
+            }
+
+            // Calculation Defaults Section
+            SettingsSectionHeader(title = "CALCULATION DEFAULTS")
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = colors.surface),
+                shape = RoundedCornerShape(20.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+            ) {
+                Column(modifier = Modifier.padding(8.dp)) {
+                    ThemeOptionRow(
+                        title = "Degrees (°)",
+                        subtitle = "Trigonometric calculations evaluated in degrees (0° - 360°)",
+                        icon = Icons.Default.Calculate,
+                        selected = preferences.angleMode == AngleMode.DEGREES,
+                        onClick = { onAngleModeChange(AngleMode.DEGREES) }
+                    )
+                    ThemeOptionRow(
+                        title = "Radians (rad)",
+                        subtitle = "Trigonometric calculations evaluated in radians (0 - 2π)",
+                        icon = Icons.Default.Calculate,
+                        selected = preferences.angleMode == AngleMode.RADIANS,
+                        onClick = { onAngleModeChange(AngleMode.RADIANS) }
                     )
                 }
             }

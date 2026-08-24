@@ -1,6 +1,7 @@
 package com.sauryah.graion.ui.calculator
 
 import com.sauryah.graion.domain.engine.CalculatorEngine
+import com.sauryah.graion.domain.model.AngleMode
 import com.sauryah.graion.domain.model.CalculationRecord
 import com.sauryah.graion.domain.model.CalculatorAction
 import com.sauryah.graion.domain.model.CalculatorOperator
@@ -280,6 +281,14 @@ class CalculatorViewModelTest {
         assertEquals("8", viewModel.uiState.value.result)
         assertEquals("10", viewModel.uiState.value.memory)
     }
+
+    @Test
+    fun testToggleAngleMode() = runTest {
+        assertEquals(AngleMode.DEGREES, viewModel.userPreferences.value.angleMode)
+        viewModel.onAction(CalculatorAction.ToggleAngleMode)
+        advanceUntilIdle()
+        assertEquals(AngleMode.RADIANS, fakeSettingsRepository.userPreferences.value.angleMode)
+    }
 }
 
 private class FakeHistoryRepository : HistoryRepository {
@@ -324,5 +333,9 @@ private class FakeSettingsRepository : SettingsRepository {
 
     override suspend fun setSoundEnabled(enabled: Boolean) {
         userPreferences.value = userPreferences.value.copy(soundEnabled = enabled)
+    }
+
+    override suspend fun setAngleMode(mode: AngleMode) {
+        userPreferences.value = userPreferences.value.copy(angleMode = mode)
     }
 }

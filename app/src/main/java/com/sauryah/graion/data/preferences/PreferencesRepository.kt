@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.sauryah.graion.domain.model.AngleMode
 import com.sauryah.graion.domain.model.ThemeMode
 import com.sauryah.graion.domain.model.UserPreferences
 import com.sauryah.graion.domain.repository.SettingsRepository
@@ -24,6 +25,7 @@ class PreferencesRepository(private val context: Context) : SettingsRepository {
         val THEME_MODE = stringPreferencesKey("theme_mode")
         val HAPTICS_ENABLED = booleanPreferencesKey("haptics_enabled")
         val SOUND_ENABLED = booleanPreferencesKey("sound_enabled")
+        val ANGLE_MODE = stringPreferencesKey("angle_mode")
     }
 
     override val userPreferencesFlow: Flow<UserPreferences> = context.dataStore.data
@@ -45,10 +47,18 @@ class PreferencesRepository(private val context: Context) : SettingsRepository {
             val haptics = preferences[PreferencesKeys.HAPTICS_ENABLED] ?: true
             val sound = preferences[PreferencesKeys.SOUND_ENABLED] ?: false
 
+            val angleString = preferences[PreferencesKeys.ANGLE_MODE] ?: AngleMode.DEGREES.name
+            val angleMode = try {
+                AngleMode.valueOf(angleString)
+            } catch (e: Exception) {
+                AngleMode.DEGREES
+            }
+
             UserPreferences(
                 themeMode = themeMode,
                 hapticsEnabled = haptics,
-                soundEnabled = sound
+                soundEnabled = sound,
+                angleMode = angleMode
             )
         }
 
@@ -69,4 +79,11 @@ class PreferencesRepository(private val context: Context) : SettingsRepository {
             preferences[PreferencesKeys.SOUND_ENABLED] = enabled
         }
     }
+
+    override suspend fun setAngleMode(mode: AngleMode) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.ANGLE_MODE] = mode.name
+        }
+    }
 }
+

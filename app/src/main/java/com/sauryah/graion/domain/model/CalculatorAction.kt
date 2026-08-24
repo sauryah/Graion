@@ -30,7 +30,8 @@ enum class CalculatorFunction(val symbol: String, val displayName: String) {
     SIN("sin", "sin"),
     COS("cos", "cos"),
     TAN("tan", "tan"),
-    LN("ln", "ln")
+    LN("ln", "ln"),
+    LOG("log", "log")
 }
 
 sealed interface CalculatorAction {
@@ -52,4 +53,5 @@ sealed interface CalculatorAction {
     data object MemoryClear : CalculatorAction
     data class SetExpression(val expression: String) : CalculatorAction
     data class UseResult(val result: String) : CalculatorAction
+    data object ToggleAngleMode : CalculatorAction
 }

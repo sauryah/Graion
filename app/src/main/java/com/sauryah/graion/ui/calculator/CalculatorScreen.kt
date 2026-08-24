@@ -35,6 +35,13 @@ import com.sauryah.graion.theme.CalculatorTheme
 import com.sauryah.graion.ui.components.CalculatorKeypad
 import com.sauryah.graion.ui.components.DisplayArea
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import com.sauryah.graion.domain.model.AngleMode
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalculatorScreen(
@@ -61,17 +68,45 @@ fun CalculatorScreen(
                             fontSize = 20.sp,
                             fontWeight = FontWeight.SemiBold
                         )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        // Interactive DEG / RAD Mode Switch
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(colors.surfaceVariant.copy(alpha = 0.8f))
+                                .clickable { onAction(CalculatorAction.ToggleAngleMode) }
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                .semantics {
+                                    role = Role.Button
+                                    contentDescription = "Angle mode ${if (preferences.angleMode == AngleMode.DEGREES) "Degrees" else "Radians"}. Tap to toggle."
+                                }
+                        ) {
+                            Text(
+                                text = if (preferences.angleMode == AngleMode.DEGREES) "DEG" else "RAD",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = colors.accentPrimary,
+                                letterSpacing = 0.5.sp
+                            )
+                        }
                         if (state.memory != null) {
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = "M",
-                                color = colors.accentPrimary,
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.semantics {
-                                    contentDescription = "Memory stored"
-                                }
-                            )
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(colors.accentPrimary.copy(alpha = 0.15f))
+                                    .padding(horizontal = 6.dp, vertical = 2.dp)
+                            ) {
+                                Text(
+                                    text = "M",
+                                    color = colors.accentPrimary,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.semantics {
+                                        contentDescription = "Memory stored: ${state.memory}"
+                                    }
+                                )
+                            }
                         }
                     }
                 },

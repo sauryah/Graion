@@ -99,6 +99,7 @@ fun MainNavigation(
                 SettingsScreen(
                     preferences = preferences,
                     onThemeChange = { mode -> viewModel.setThemeMode(mode) },
+                    onAngleModeChange = { mode -> viewModel.setAngleMode(mode) },
                     onHapticsChange = { enabled -> viewModel.setHapticsEnabled(enabled) },
                     onSoundChange = { enabled -> viewModel.setSoundEnabled(enabled) },
                     onClearHistory = { viewModel.clearHistory() },

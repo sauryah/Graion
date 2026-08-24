@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sauryah.graion.domain.engine.CalculatorEngine
 import com.sauryah.graion.domain.engine.NumberFormatter
+import com.sauryah.graion.domain.model.AngleMode
 import com.sauryah.graion.domain.model.CalculationRecord
 import com.sauryah.graion.domain.model.CalculatorAction
 import com.sauryah.graion.domain.model.CalculatorConstant
@@ -65,6 +66,7 @@ class CalculatorViewModel(
             is CalculatorAction.MemoryClear -> handleMemoryClear()
             is CalculatorAction.SetExpression -> handleSetExpression(action.expression)
             is CalculatorAction.UseResult -> handleUseResult(action.result)
+            is CalculatorAction.ToggleAngleMode -> handleToggleAngleMode()
         }
     }
 
@@ -219,7 +221,7 @@ class CalculatorViewModel(
             return
         }
 
-        when (val result = engine.evaluate(state.expression)) {
+        when (val result = engine.evaluate(state.expression, userPreferences.value.angleMode)) {
             is EvaluationResult.Success -> {
                 saveCalculationToHistory(state.expression, result.formatted)
                 _uiState.update {
@@ -489,8 +491,14 @@ class CalculatorViewModel(
         )
     }
 
+    private fun handleToggleAngleMode() {
+        val currentMode = userPreferences.value.angleMode
+        val newMode = if (currentMode == AngleMode.DEGREES) AngleMode.RADIANS else AngleMode.DEGREES
+        setAngleMode(newMode)
+    }
+
     private fun evaluateLivePreview(expr: String): String? {
-        return when (val preview = engine.evaluatePreview(expr)) {
+        return when (val preview = engine.evaluatePreview(expr, userPreferences.value.angleMode)) {
             is EvaluationResult.Success -> {
                 if (preview.formatted != expr) preview.formatted else null
             }
@@ -530,6 +538,21 @@ class CalculatorViewModel(
         }
     }
 
+    fun setAngleMode(mode: AngleMode) {
+        viewModelScope.launch {
+            settingsRepository.setAngleMode(mode)
+            // Re-evaluate live preview if non-empty
+            _uiState.update { current ->
+                if (!current.isCalculated && current.expression.isNotEmpty() && current.expression != "0") {
+                    val preview = engine.evaluatePreview(current.expression, mode)
+                    current.copy(previewResult = if (preview is EvaluationResult.Success && preview.formatted != current.expression) preview.formatted else null)
+                } else {
+                    current
+                }
+            }
+        }
+    }
+
     fun deleteHistoryItem(id: Long) {
         viewModelScope.launch {
             historyRepository.deleteCalculation(id)
@@ -542,3 +565,4 @@ class CalculatorViewModel(
         }
     }
 }
+
