@@ -1,4 +1,4 @@
-package com.sauryah.graion.ui.wiredrawing
+﻿package com.sauryah.graion.ui.wiredrawing
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,10 +15,7 @@ import androidx.compose.material.icons.filled.Analytics
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Calculate
-import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material.icons.filled.Redo
 import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,13 +32,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import com.sauryah.graion.theme.LocalCalculatorColors
 import com.sauryah.graion.ui.wiredrawing.components.ConsistencyDetailDialog
 import com.sauryah.graion.ui.wiredrawing.components.DieSeriesGeneratorDialog
@@ -52,6 +48,7 @@ import com.sauryah.graion.ui.wiredrawing.components.PassDetailBottomSheet
 import com.sauryah.graion.ui.wiredrawing.components.SaveScheduleDialog
 import com.sauryah.graion.ui.wiredrawing.components.ScheduleCompareDialog
 import com.sauryah.graion.ui.wiredrawing.components.TargetCheckerDialog
+import com.sauryah.graion.ui.wiredrawing.components.WireWeightDialog
 import com.sauryah.graion.ui.wiredrawing.components.analysisTabContent
 import com.sauryah.graion.ui.wiredrawing.components.calculateTabContent
 import com.sauryah.graion.ui.wiredrawing.components.optimizeTabContent
@@ -226,7 +223,8 @@ fun WireDrawingScreen(
                         colors = colors,
                         onOpenGenerateSeries = { viewModel.setSeriesGeneratorOpen(true) },
                         onOpenTargetCheck = { viewModel.setTargetCheckerOpen(true) },
-                        onOpenSuggestDies = { viewModel.setSuggesterOpen(true) }
+                        onOpenSuggestDies = { viewModel.setSuggesterOpen(true) },
+                        onOpenWireWeight = { viewModel.setWireWeightDialogOpen(true) }
                     )
                 }
 
@@ -238,7 +236,10 @@ fun WireDrawingScreen(
                         onOpenSaveDialog = { viewModel.setSaveDialogOpen(true) },
                         onOpenCompareDialog = { viewModel.setCompareDialogOpen(true) },
                         onLoadSchedule = viewModel::onLoadSchedule,
-                        onDeleteSchedule = viewModel::onDeleteSchedule
+                        onDeleteSchedule = viewModel::onDeleteSchedule,
+                        onExportCsv = viewModel::exportCsv,
+                        onExportPdf = viewModel::exportPdf,
+                        onExportCad = viewModel::exportCadSpec
                     )
                 }
             }
@@ -255,7 +256,7 @@ fun WireDrawingScreen(
         onEditDieClick = viewModel::openEditPass,
         onViewCadClick = {
             viewModel.closePassDetail()
-            viewModel.onNavSelected(WireDrawingBottomNav.ANALYSIS)
+            viewModel.setCadDetailOpen(true)
         }
     )
 
@@ -338,5 +339,13 @@ fun WireDrawingScreen(
         consistency = state.consistency,
         colors = colors,
         onDismiss = { viewModel.setConsistencyDetailOpen(false) }
+    )
+
+    // 10. Wire Weight & Length Calculator Dialog
+    WireWeightDialog(
+        isOpen = state.isWireWeightDialogOpen,
+        initialDiameterMm = state.dies.firstOrNull() ?: 2.0,
+        colors = colors,
+        onDismiss = { viewModel.setWireWeightDialogOpen(false) }
     )
 }

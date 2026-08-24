@@ -33,12 +33,15 @@ import androidx.compose.ui.unit.sp
 import com.sauryah.graion.theme.CalculatorColors
 import com.sauryah.graion.ui.wiredrawing.WireDrawingState
 
+import androidx.compose.material.icons.filled.Scale
+
 fun LazyListScope.optimizeTabContent(
     state: WireDrawingState,
     colors: CalculatorColors,
     onOpenGenerateSeries: () -> Unit,
     onOpenTargetCheck: () -> Unit,
-    onOpenSuggestDies: () -> Unit
+    onOpenSuggestDies: () -> Unit,
+    onOpenWireWeight: () -> Unit
 ) {
     item {
         Column(modifier = Modifier.fillMaxWidth().padding(top = 4.dp, bottom = 4.dp)) {
@@ -99,6 +102,18 @@ fun LazyListScope.optimizeTabContent(
             icon = Icons.Default.AutoFixHigh,
             colors = colors,
             onClick = onOpenSuggestDies
+        )
+    }
+
+    // 4. Wire Weight & Length Calculator Card
+    item {
+        OptimizationToolCard(
+            title = "WIRE WEIGHT & LENGTH",
+            subtitle = "Calculate total coil weight, linear mass in g/m, and length for Cu, Al, Steel, Brass & Alloys.",
+            badge = "WEIGHT & LENGTH",
+            icon = Icons.Default.Scale,
+            colors = colors,
+            onClick = onOpenWireWeight
         )
     }
 }
