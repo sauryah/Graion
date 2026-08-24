@@ -1,4 +1,4 @@
-﻿package com.sauryah.graion.domain.engine.scripting
+package com.sauryah.graion.domain.engine.scripting
 
 import com.sauryah.graion.domain.engine.python.PythonEngine
 import com.sauryah.graion.domain.model.scripting.ScriptLanguage
@@ -113,10 +113,10 @@ const areaOut = Math.PI * (dOut / 2) * (dOut / 2);
 const areaReductionPct = ((areaIn - areaOut) / areaIn) * 100;
 const elongationPct = ((areaIn / areaOut) - 1) * 100;
 
-console.log(`Inlet Die:      ${dIn} mm`);
-console.log(`Outlet Die:     ${dOut} mm`);
-console.log(`Area Reduction: ${areaReductionPct.toFixed(2)} %`);
-console.log(`Elongation:     ${elongationPct.toFixed(2)} %`);
+console.log("Inlet Die:      " + dIn + " mm");
+console.log("Outlet Die:     " + dOut + " mm");
+console.log("Area Reduction: " + areaReductionPct.toFixed(2) + " %");
+console.log("Elongation:     " + elongationPct.toFixed(2) + " %");
 """
             ),
             ScriptPreset(
@@ -134,10 +134,10 @@ const volumeCm3 = areaCm2 * (lengthM * 100);
 const totalWeightKg = (volumeCm3 * copperDensity) / 1000;
 const linearMassGPerM = (totalWeightKg * 1000) / lengthM;
 
-console.log(`Wire Diameter: ${wireDiaMm} mm`);
-console.log(`Coil Length:   ${lengthM} m`);
-console.log(`Linear Mass:   ${linearMassGPerM.toFixed(3)} g/m`);
-console.log(`Total Weight:  ${totalWeightKg.toFixed(2)} kg`);
+console.log("Wire Diameter: " + wireDiaMm + " mm");
+console.log("Coil Length:   " + lengthM + " m");
+console.log("Linear Mass:   " + linearMassGPerM.toFixed(3) + " g/m");
+console.log("Total Weight:  " + totalWeightKg.toFixed(2) + " kg");
 """
             )
         ),

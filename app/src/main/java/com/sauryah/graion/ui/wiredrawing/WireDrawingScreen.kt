@@ -238,10 +238,7 @@ fun WireDrawingScreen(
                         onOpenSaveDialog = { viewModel.setSaveDialogOpen(true) },
                         onOpenCompareDialog = { viewModel.setCompareDialogOpen(true) },
                         onLoadSchedule = viewModel::onLoadSchedule,
-                        onDeleteSchedule = viewModel::onDeleteSchedule,
-                        onExportCsv = viewModel::exportCsv,
-                        onExportPdf = viewModel::exportPdf,
-                        onExportCad = viewModel::exportCadSpec
+                        onDeleteSchedule = viewModel::onDeleteSchedule
                     )
                 }
             }

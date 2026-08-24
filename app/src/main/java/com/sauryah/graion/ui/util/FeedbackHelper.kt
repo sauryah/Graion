@@ -8,6 +8,7 @@ import android.os.Vibrator
 import android.os.VibratorManager
 import android.view.HapticFeedbackConstants
 import android.view.View
+import java.util.concurrent.Executors
 
 object FeedbackHelper {
 
@@ -16,6 +17,8 @@ object FeedbackHelper {
 
     @Volatile
     private var audioManager: AudioManager? = null
+
+    private val asyncExecutor by lazy { Executors.newSingleThreadExecutor() }
 
     private fun getVibrator(context: Context): Vibrator? {
         if (vibrator == null) {
@@ -49,27 +52,34 @@ object FeedbackHelper {
         if (!enabled) return
 
         try {
-            if (view != null && view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)) {
+            if (view != null && view.performHapticFeedback(
+                    HapticFeedbackConstants.KEYBOARD_TAP,
+                    HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING
+                )
+            ) {
                 return
             }
 
-            val vib = getVibrator(context)
-            if (vib != null && vib.hasVibrator()) {
-                vib.vibrate(VibrationEffect.createOneShot(10, VibrationEffect.DEFAULT_AMPLITUDE))
+            asyncExecutor.execute {
+                try {
+                    val vib = getVibrator(context)
+                    if (vib != null && vib.hasVibrator()) {
+                        vib.vibrate(VibrationEffect.createOneShot(8, VibrationEffect.DEFAULT_AMPLITUDE))
+                    }
+                } catch (_: Exception) {}
             }
-        } catch (e: Exception) {
-            // Silently handle any vibration issues
-        }
+        } catch (_: Exception) {}
     }
 
     fun performSound(context: Context, enabled: Boolean) {
         if (!enabled) return
 
-        try {
-            getAudioManager(context)?.playSoundEffect(AudioManager.FX_KEY_CLICK, 0.4f)
-        } catch (e: Exception) {
-            // Silently handle audio issues
+        asyncExecutor.execute {
+            try {
+                getAudioManager(context)?.playSoundEffect(AudioManager.FX_KEY_CLICK, 0.4f)
+            } catch (_: Exception) {}
         }
     }
 }
+
 

@@ -10,17 +10,22 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sauryah.graion.domain.engine.python.PythonEngine
 import com.sauryah.graion.theme.GraionTheme
 import com.sauryah.graion.ui.calculator.CalculatorViewModel
 import com.sauryah.graion.ui.calculator.CalculatorViewModelFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        PythonEngine.init(this)
+        lifecycleScope.launch(Dispatchers.IO) {
+            PythonEngine.init(applicationContext)
+        }
 
         setContent {
             val viewModel: CalculatorViewModel = viewModel(
