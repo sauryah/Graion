@@ -1,4 +1,4 @@
-package com.sauryah.graion.ui.python
+﻿package com.sauryah.graion.ui.python
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -25,11 +25,14 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Terminal
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -57,118 +60,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sauryah.graion.domain.engine.python.PythonEngine
+import com.sauryah.graion.domain.engine.scripting.PolyglotScriptEngine
+import com.sauryah.graion.domain.model.scripting.ScriptLanguage
 import com.sauryah.graion.theme.LocalCalculatorColors
-
-import androidx.compose.material3.CircularProgressIndicator
-
-private val samplePresets = listOf(
-    "Wire Drawing" to """# Calculate Constant Elongation Die Passes
-d_in = 2.490
-d_out = 0.309
-passes = 18
-
-ratio = (d_out / d_in) ** (1.0 / passes)
-print(f"Required Ratio: {ratio:.4f}")
-print("--- PASS SCHEDULE ---")
-d = d_in
-for i in range(1, passes + 1):
-    next_d = d * ratio
-    elong = ((d/next_d)**2 - 1) * 100
-    print(f"Pass {i:02d}: {d:.3f} mm -> {next_d:.3f} mm | Elong: {elong:.2f}%")
-    d = next_d
-""",
-    "Drawing Force" to """# Wire Drawing Force & Power (Siebel Formula)
-import math
-
-d_in = 2.490   # mm
-d_out = 2.050  # mm
-yield_stress = 450.0  # MPa (N/mm^2)
-die_semi_angle_deg = 8.0  # degrees
-mu = 0.08  # friction coefficient
-drawing_speed = 12.0  # m/s
-
-alpha = math.radians(die_semi_angle_deg)
-area_in = math.pi * (d_in / 2)**2
-area_out = math.pi * (d_out / 2)**2
-reduction = (area_in - area_out) / area_in
-epsilon = math.log(area_in / area_out)
-
-# Siebel drawing stress formula: sigma_d = k_mean * (epsilon + (4/3)*alpha + mu*epsilon/alpha)
-sigma_draw = yield_stress * (epsilon + (4.0/3.0)*math.sin(alpha) + (mu/math.tan(alpha))*epsilon)
-draw_force_N = sigma_draw * area_out
-draw_power_kW = (draw_force_N * drawing_speed) / 1000.0
-
-print(f"Area Reduction: {reduction*100:.2f}%")
-print(f"Drawing Stress: {sigma_draw:.2f} MPa")
-print(f"Drawing Force:  {draw_force_N:.1f} N ({draw_force_N/9.80665:.1f} kgf)")
-print(f"Drawing Power:  {draw_power_kW:.2f} kW")
-""",
-    "Math & Trig" to """import math
-
-# Vector magnitude and angle
-x, y = 12.5, 7.8
-mag = math.sqrt(x**2 + y**2)
-deg = math.degrees(math.atan2(y, x))
-
-print(f"Vector: ({x}, {y})")
-print(f"Magnitude: {mag:.4f}")
-print(f"Angle: {deg:.2f}°")
-""",
-    "Flow Stress" to """# Work Hardening Flow Stress (Hollomon: sigma = K * epsilon^n)
-import math
-
-# Material Hollomon parameters
-materials = {
-    "Copper (ETP annealed)": {"K": 480.0, "n": 0.35, "sigma_0": 70.0},
-    "Aluminum 1100-O":       {"K": 180.0, "n": 0.20, "sigma_0": 35.0},
-    "Stainless Steel 304":   {"K": 1200.0, "n": 0.45, "sigma_0": 240.0},
-    "High Carbon Steel":     {"K": 1100.0, "n": 0.15, "sigma_0": 550.0}
-}
-
-d0 = 2.490  # mm inlet
-d1 = 0.500  # mm final
-
-true_strain = 2.0 * math.log(d0 / d1)
-print(f"Total True Strain: {true_strain:.3f}")
-print("=" * 45)
-
-for mat, params in materials.items():
-    sigma = params["sigma_0"] + params["K"] * (true_strain ** params["n"])
-    uts_approx = sigma * 1.08
-    print(f"{mat:22s} -> Flow Stress: {sigma:6.1f} MPa | Est UTS: {uts_approx:6.1f} MPa")
-""",
-    "Resistance & Drop" to """# Copper Wire Resistance & Voltage Drop at 20°C
-import math
-
-diameter_mm = 1.628  # 14 AWG
-length_m = 100.0     # metres
-current_A = 15.0     # Amperes
-rho_copper_20C = 0.017241  # ohm * mm^2 / m (IACS 100%)
-
-area_mm2 = math.pi * (diameter_mm / 2.0)**2
-resistance_20C = rho_copper_20C * (length_m / area_mm2)
-v_drop = current_A * (2 * resistance_20C)  # Loop (send + return)
-power_loss_W = (current_A ** 2) * (2 * resistance_20C)
-
-print(f"Wire Diameter: {diameter_mm:.3f} mm (Area: {area_mm2:.3f} mm²)")
-print(f"One-way Resistance: {resistance_20C:.4f} Ω")
-print(f"Loop Voltage Drop:  {v_drop:.2f} V ({v_drop/240.0*100:.2f}% on 240V)")
-print(f"I²R Power Loss:     {power_loss_W:.1f} Watts")
-""",
-    "Fibonacci" to """# Fibonacci Series Generator
-def fib(n):
-    a, b = 0, 1
-    res = []
-    for _ in range(n):
-        res.append(a)
-        a, b = b, a + b
-    return res
-
-print("First 15 Fibonacci numbers:")
-print(fib(15))
-"""
-)
+import com.sauryah.graion.ui.util.ShareHelper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -179,9 +74,22 @@ fun PythonWorkbenchScreen(
     val colors = LocalCalculatorColors.current
     val context = LocalContext.current
 
-    var code by remember { mutableStateOf(samplePresets[0].second) }
+    var selectedLanguage by remember { mutableStateOf(ScriptLanguage.PYTHON) }
+    var code by remember { mutableStateOf(PolyglotScriptEngine.PRESETS[ScriptLanguage.PYTHON]?.firstOrNull()?.code ?: "") }
     var output by remember { mutableStateOf("") }
     var isRunning by remember { mutableStateOf(false) }
+    var executionTimeMs by remember { mutableStateOf<Long?>(null) }
+
+    fun selectLanguage(lang: ScriptLanguage) {
+        if (lang == selectedLanguage) return
+        selectedLanguage = lang
+        val defaultPreset = PolyglotScriptEngine.PRESETS[lang]?.firstOrNull()
+        if (defaultPreset != null) {
+            code = defaultPreset.code
+        }
+        output = ""
+        executionTimeMs = null
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -190,7 +98,7 @@ fun PythonWorkbenchScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Python Workbench",
+                        text = "Code & Script Studio",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = colors.textPrimary,
@@ -203,6 +111,25 @@ fun PythonWorkbenchScreen(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
                             tint = colors.textPrimary
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            if (code.isNotEmpty()) {
+                                ShareHelper.shareContent(
+                                    context = context,
+                                    title = "Export ${selectedLanguage.displayName} Script",
+                                    content = code
+                                )
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Share,
+                            contentDescription = "Share script",
+                            tint = colors.textSecondary
                         )
                     }
                 },
@@ -221,27 +148,61 @@ fun PythonWorkbenchScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            // Preset Chips
+            // 1. Language Selector Chips
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                samplePresets.forEach { (name, snippet) ->
+                ScriptLanguage.entries.forEach { lang ->
+                    val isSelected = lang == selectedLanguage
                     FilterChip(
-                        selected = code == snippet,
-                        onClick = { code = snippet },
-                        label = { Text(name, fontSize = 12.sp) },
+                        selected = isSelected,
+                        onClick = { selectLanguage(lang) },
+                        label = {
+                            Text(
+                                text = "${lang.iconEmoji} ${lang.displayName}",
+                                fontSize = 12.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                            )
+                        },
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = colors.accentPrimary.copy(alpha = 0.15f),
-                            selectedLabelColor = colors.accentPrimary
+                            selectedContainerColor = colors.accentPrimary,
+                            selectedLabelColor = Color.White
                         )
                     )
                 }
             }
 
-            // Code Editor Card
+            // 2. Preset Chips for Current Language
+            val currentPresets = PolyglotScriptEngine.PRESETS[selectedLanguage] ?: emptyList()
+            if (currentPresets.isNotEmpty()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    currentPresets.forEach { preset ->
+                        FilterChip(
+                            selected = code == preset.code,
+                            onClick = {
+                                code = preset.code
+                                output = ""
+                                executionTimeMs = null
+                            },
+                            label = { Text(preset.title, fontSize = 11.sp) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = colors.accentPrimary.copy(alpha = 0.15f),
+                                selectedLabelColor = colors.accentPrimary
+                            )
+                        )
+                    }
+                }
+            }
+
+            // 3. Code Editor Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -255,14 +216,18 @@ fun PythonWorkbenchScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "PYTHON SCRIPT",
+                            text = "${selectedLanguage.syntaxName.uppercase()} SCRIPT",
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = colors.textSecondary,
                             letterSpacing = 1.sp
                         )
                         IconButton(
-                            onClick = { code = "" },
+                            onClick = {
+                                code = ""
+                                output = ""
+                                executionTimeMs = null
+                            },
                             modifier = Modifier.size(24.dp)
                         ) {
                             Icon(
@@ -281,7 +246,7 @@ fun PythonWorkbenchScreen(
                         onValueChange = { code = it },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(220.dp),
+                            .height(230.dp),
                         textStyle = TextStyle(
                             fontFamily = FontFamily.Monospace,
                             fontSize = 13.sp,
@@ -302,7 +267,9 @@ fun PythonWorkbenchScreen(
                         onClick = {
                             if (!isRunning) {
                                 isRunning = true
-                                output = PythonEngine.executeCode(code)
+                                val startTime = System.currentTimeMillis()
+                                output = PolyglotScriptEngine.execute(code, selectedLanguage)
+                                executionTimeMs = System.currentTimeMillis() - startTime
                                 isRunning = false
                             }
                         },
@@ -338,7 +305,7 @@ fun PythonWorkbenchScreen(
                 }
             }
 
-            // Output Terminal Card
+            // 4. Output Terminal Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -366,13 +333,31 @@ fun PythonWorkbenchScreen(
                                 color = colors.textSecondary,
                                 letterSpacing = 1.sp
                             )
+                            if (executionTimeMs != null) {
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(
+                                        imageVector = Icons.Default.Timer,
+                                        contentDescription = null,
+                                        tint = colors.accentPrimary,
+                                        modifier = Modifier.size(12.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(2.dp))
+                                    Text(
+                                        text = "${executionTimeMs}ms",
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = colors.accentPrimary
+                                    )
+                                }
+                            }
                         }
 
                         if (output.isNotEmpty()) {
                             IconButton(
                                 onClick = {
                                     val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
-                                    val clip = ClipData.newPlainText("Python Output", output)
+                                    val clip = ClipData.newPlainText("${selectedLanguage.displayName} Output", output)
                                     clipboard?.setPrimaryClip(clip)
                                     Toast.makeText(context, "Output copied to clipboard", Toast.LENGTH_SHORT).show()
                                 },
@@ -402,7 +387,7 @@ fun PythonWorkbenchScreen(
                             text = if (output.isEmpty()) "Terminal ready. Press 'RUN SCRIPT' to execute." else output,
                             fontFamily = FontFamily.Monospace,
                             fontSize = 12.sp,
-                            color = if (output.startsWith("Error")) Color(0xFFF87171) else Color(0xFF38BDF8),
+                            color = if (output.startsWith("Error") || output.contains("JavaScript Error") || output.contains("Lua Error")) Color(0xFFF87171) else Color(0xFF38BDF8),
                             lineHeight = 17.sp
                         )
                     }
