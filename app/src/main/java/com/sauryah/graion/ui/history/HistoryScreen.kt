@@ -62,6 +62,10 @@ import com.sauryah.graion.domain.model.CalculationRecord
 import com.sauryah.graion.theme.CalculatorColors
 import com.sauryah.graion.theme.CalculatorTheme
 import com.sauryah.graion.ui.util.ShareHelper
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextFieldDefaults
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -84,6 +88,19 @@ fun HistoryScreen(
     val colors = CalculatorTheme.colors
     val context = LocalContext.current
     var showClearConfirmDialog by remember { mutableStateOf(false) }
+    var searchQuery by remember { mutableStateOf("") }
+    var isSearchActive by remember { mutableStateOf(false) }
+
+    val filteredList = remember(historyList, searchQuery) {
+        if (searchQuery.isBlank()) {
+            historyList
+        } else {
+            historyList.filter {
+                it.expression.contains(searchQuery, ignoreCase = true) ||
+                        it.result.contains(searchQuery, ignoreCase = true)
+            }
+        }
+    }
 
     if (showClearConfirmDialog) {
         AlertDialog(
@@ -130,25 +147,66 @@ fun HistoryScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = "History",
-                        color = colors.textPrimary,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.semantics { heading() }
-                    )
+                    if (isSearchActive) {
+                        OutlinedTextField(
+                            value = searchQuery,
+                            onValueChange = { searchQuery = it },
+                            placeholder = { Text("Search calculations...", color = colors.textSecondary, fontSize = 14.sp) },
+                            singleLine = true,
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                focusedTextColor = colors.textPrimary,
+                                unfocusedTextColor = colors.textPrimary
+                            ),
+                            trailingIcon = {
+                                if (searchQuery.isNotEmpty()) {
+                                    IconButton(onClick = { searchQuery = "" }) {
+                                        Icon(Icons.Default.Close, contentDescription = "Clear search", tint = colors.textSecondary)
+                                    }
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    } else {
+                        Text(
+                            text = "History",
+                            color = colors.textPrimary,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.semantics { heading() }
+                        )
+                    }
                 },
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
+                    IconButton(onClick = {
+                        if (isSearchActive) {
+                            isSearchActive = false
+                            searchQuery = ""
+                        } else {
+                            onBackClick()
+                        }
+                    }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back to Calculator",
+                            contentDescription = if (isSearchActive) "Close search" else "Back to Calculator",
                             tint = colors.textPrimary
                         )
                     }
                 },
                 actions = {
                     if (historyList.isNotEmpty()) {
+                        if (!isSearchActive) {
+                            IconButton(onClick = { isSearchActive = true }) {
+                                Icon(
+                                    imageVector = Icons.Default.Search,
+                                    contentDescription = "Search calculations",
+                                    tint = colors.textSecondary
+                                )
+                            }
+                        }
                         IconButton(
                             onClick = {
                                 val content = buildString {
@@ -192,6 +250,35 @@ fun HistoryScreen(
         ) {
             if (historyList.isEmpty()) {
                 EmptyHistoryView(colors)
+            } else if (filteredList.isEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null,
+                        tint = colors.textSecondary,
+                        modifier = Modifier.size(48.dp)
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = "No Results Found",
+                        color = colors.textPrimary,
+                        fontSize = 17.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "No calculations matching \"$searchQuery\"",
+                        color = colors.textSecondary,
+                        fontSize = 13.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
@@ -199,7 +286,7 @@ fun HistoryScreen(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     items(
-                        items = historyList,
+                        items = filteredList,
                         key = { it.id }
                     ) { record ->
                         HistoryCard(
