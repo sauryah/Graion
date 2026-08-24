@@ -1,6 +1,7 @@
 package com.sauryah.graion.domain.engine.wiredrawing
 
 import com.sauryah.graion.domain.model.wiredrawing.QualityRating
+import com.sauryah.graion.domain.model.wiredrawing.WireMaterial
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -188,6 +189,25 @@ class WireDrawingCalculatorEngineTest {
         val (invalidDies, invalidErrors) = WireDrawingCalculatorEngine.parseInputText("2.490, abc, -1.5, 0")
         assertEquals(1, invalidDies.size) // only 2.490
         assertEquals(3, invalidErrors.size) // 'abc', '-1.5', '0'
+    }
+
+    @Test
+    fun testWireWeightAndLengthCalculations() {
+        // Copper wire of 2.0 mm diameter, 1000 metres length:
+        // Area = PI * (0.1 cm)^2 = 0.0314159 cm^2
+        // Volume for 1000m (100,000 cm) = 3141.59 cm^3
+        // Weight for Copper (density 8.96 g/cm3) = 3141.59 * 8.96 = 28148.6 g = 28.148 kg
+        val copperResult = WireDrawingCalculatorEngine.calculateWeightKgFromLength(2.0, 1000.0, WireMaterial.COPPER)
+        assertEquals(28.148, copperResult.weightKg, 0.05)
+        assertEquals(28.148, copperResult.linearMassGPerM, 0.05)
+
+        // Inverse calculation: given 28.148 kg, should give back ~1000m
+        val lengthResult = WireDrawingCalculatorEngine.calculateLengthMetresFromWeight(2.0, copperResult.weightKg, WireMaterial.COPPER)
+        assertEquals(1000.0, lengthResult.lengthMetres, 0.5)
+
+        // Aluminum wire of 2.0 mm diameter: density 2.70 g/cm3 -> Weight should be roughly 2.70/8.96 of copper
+        val alResult = WireDrawingCalculatorEngine.calculateWeightKgFromLength(2.0, 1000.0, WireMaterial.ALUMINUM_EC)
+        assertEquals(8.482, alResult.weightKg, 0.05)
     }
 
     @Test

@@ -6,6 +6,8 @@ import com.sauryah.graion.domain.model.wiredrawing.QualityRating
 import com.sauryah.graion.domain.model.wiredrawing.SuggestedIntermediatePass
 import com.sauryah.graion.domain.model.wiredrawing.TargetCheckResult
 import com.sauryah.graion.domain.model.wiredrawing.WireDrawingStats
+import com.sauryah.graion.domain.model.wiredrawing.WireMaterial
+import com.sauryah.graion.domain.model.wiredrawing.WireWeightLengthResult
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.math.PI
@@ -401,5 +403,49 @@ object WireDrawingCalculatorEngine {
                 isOutOfRange = outOfRange
             )
         }
+    }
+
+    /**
+     * Calculates linear mass in grams per metre for a round wire:
+     * Area (cm^2) = PI * (d_mm / 20)^2
+     * Volume per metre (cm^3) = Area (cm^2) * 100 cm
+     * Mass (g/m) = Volume (cm^3) * Density (g/cm^3)
+     */
+    fun calculateLinearMassGramsPerMetre(diameterMm: Double, material: WireMaterial): Double {
+        if (diameterMm <= 0.0) return 0.0
+        val radiusCm = (diameterMm / 10.0) / 2.0
+        val areaCm2 = PI * radiusCm * radiusCm
+        val volumeCm3PerMetre = areaCm2 * 100.0
+        return volumeCm3PerMetre * material.densityGPerCm3
+    }
+
+    /**
+     * Calculates wire weight in kg from diameter, length in metres, and material density.
+     */
+    fun calculateWeightKgFromLength(diameterMm: Double, lengthMetres: Double, material: WireMaterial): WireWeightLengthResult {
+        val linearMassGPerM = calculateLinearMassGramsPerMetre(diameterMm, material)
+        val totalWeightKg = (linearMassGPerM * lengthMetres) / 1000.0
+        return WireWeightLengthResult(
+            diameterMm = diameterMm,
+            lengthMetres = lengthMetres,
+            weightKg = totalWeightKg,
+            linearMassGPerM = linearMassGPerM,
+            materialName = material.displayName
+        )
+    }
+
+    /**
+     * Calculates wire length in metres from diameter, total weight in kg, and material density.
+     */
+    fun calculateLengthMetresFromWeight(diameterMm: Double, weightKg: Double, material: WireMaterial): WireWeightLengthResult {
+        val linearMassGPerM = calculateLinearMassGramsPerMetre(diameterMm, material)
+        val totalLengthM = if (linearMassGPerM > 0.0) (weightKg * 1000.0) / linearMassGPerM else 0.0
+        return WireWeightLengthResult(
+            diameterMm = diameterMm,
+            lengthMetres = totalLengthM,
+            weightKg = weightKg,
+            linearMassGPerM = linearMassGPerM,
+            materialName = material.displayName
+        )
     }
 }
