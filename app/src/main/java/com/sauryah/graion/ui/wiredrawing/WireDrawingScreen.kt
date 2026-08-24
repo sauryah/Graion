@@ -1,4 +1,4 @@
-﻿package com.sauryah.graion.ui.wiredrawing
+package com.sauryah.graion.ui.wiredrawing
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,6 +44,7 @@ import com.sauryah.graion.ui.wiredrawing.components.DieSeriesGeneratorDialog
 import com.sauryah.graion.ui.wiredrawing.components.DieSuggesterDialog
 import com.sauryah.graion.ui.wiredrawing.components.EditDieDialog
 import com.sauryah.graion.ui.wiredrawing.components.EditDiesInputDialog
+import com.sauryah.graion.ui.wiredrawing.components.MachineKinematicsDialog
 import com.sauryah.graion.ui.wiredrawing.components.PassDetailBottomSheet
 import com.sauryah.graion.ui.wiredrawing.components.SaveScheduleDialog
 import com.sauryah.graion.ui.wiredrawing.components.ScheduleCompareDialog
@@ -224,7 +225,8 @@ fun WireDrawingScreen(
                         onOpenGenerateSeries = { viewModel.setSeriesGeneratorOpen(true) },
                         onOpenTargetCheck = { viewModel.setTargetCheckerOpen(true) },
                         onOpenSuggestDies = { viewModel.setSuggesterOpen(true) },
-                        onOpenWireWeight = { viewModel.setWireWeightDialogOpen(true) }
+                        onOpenWireWeight = { viewModel.setWireWeightDialogOpen(true) },
+                        onOpenKinematics = { viewModel.setKinematicsDialogOpen(true) }
                     )
                 }
 
@@ -347,5 +349,13 @@ fun WireDrawingScreen(
         initialDiameterMm = state.dies.firstOrNull() ?: 2.0,
         colors = colors,
         onDismiss = { viewModel.setWireWeightDialogOpen(false) }
+    )
+
+    // 11. Machine Kinematics & Line Speed Dialog
+    MachineKinematicsDialog(
+        isOpen = state.isKinematicsDialogOpen,
+        passes = state.passes,
+        colors = colors,
+        onDismiss = { viewModel.setKinematicsDialogOpen(false) }
     )
 }

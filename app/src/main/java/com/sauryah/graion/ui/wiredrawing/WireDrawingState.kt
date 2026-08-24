@@ -55,6 +55,7 @@ data class WireDrawingState(
     val isConsistencyDetailOpen: Boolean = false,
     val isCadDetailOpen: Boolean = false,
     val isWireWeightDialogOpen: Boolean = false,
+    val isKinematicsDialogOpen: Boolean = false,
     val statusMessage: String? = null
 ) {
     val isValidSchedule: Boolean

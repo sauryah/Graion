@@ -34,6 +34,7 @@ import com.sauryah.graion.theme.CalculatorColors
 import com.sauryah.graion.ui.wiredrawing.WireDrawingState
 
 import androidx.compose.material.icons.filled.Scale
+import androidx.compose.material.icons.filled.Speed
 
 fun LazyListScope.optimizeTabContent(
     state: WireDrawingState,
@@ -41,7 +42,8 @@ fun LazyListScope.optimizeTabContent(
     onOpenGenerateSeries: () -> Unit,
     onOpenTargetCheck: () -> Unit,
     onOpenSuggestDies: () -> Unit,
-    onOpenWireWeight: () -> Unit
+    onOpenWireWeight: () -> Unit,
+    onOpenKinematics: () -> Unit
 ) {
     item {
         Column(modifier = Modifier.fillMaxWidth().padding(top = 4.dp, bottom = 4.dp)) {
@@ -114,6 +116,18 @@ fun LazyListScope.optimizeTabContent(
             icon = Icons.Default.Scale,
             colors = colors,
             onClick = onOpenWireWeight
+        )
+    }
+
+    // 5. Line Speed & Kinematics Card
+    item {
+        OptimizationToolCard(
+            title = "LINE SPEED & KINEMATICS",
+            subtitle = "Calculate capstan drawing speeds, slip ratios, and production throughput (kg/hr & tonnes/shift).",
+            badge = "KINEMATICS",
+            icon = Icons.Default.Speed,
+            colors = colors,
+            onClick = onOpenKinematics
         )
     }
 }

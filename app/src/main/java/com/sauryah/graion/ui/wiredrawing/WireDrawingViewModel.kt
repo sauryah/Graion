@@ -347,6 +347,10 @@ class WireDrawingViewModel(
         _uiState.update { it.copy(isWireWeightDialogOpen = open) }
     }
 
+    fun setKinematicsDialogOpen(open: Boolean) {
+        _uiState.update { it.copy(isKinematicsDialogOpen = open) }
+    }
+
     fun dismissStatusMessage() {
         _uiState.update { it.copy(statusMessage = null) }
     }
