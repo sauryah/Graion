@@ -89,6 +89,57 @@ class UnitConverterEngineTest {
     }
 
     @Test
+    fun `force conversions are accurate`() {
+        val units = UnitConverterEngine.unitsFor(UnitCategory.FORCE)
+        val n = units.first { it.id == "n" }
+        val kn = units.first { it.id == "kn" }
+        val lbf = units.first { it.id == "lbf" }
+        val kgf = units.first { it.id == "kgf" }
+
+        assertEquals(1.0, UnitConverterEngine.convert(1000.0, n, kn), 1e-6)
+        assertEquals(4.44822, UnitConverterEngine.convert(1.0, lbf, n), 1e-4)
+        assertEquals(9.80665, UnitConverterEngine.convert(1.0, kgf, n), 1e-4)
+    }
+
+    @Test
+    fun `torque conversions are accurate`() {
+        val units = UnitConverterEngine.unitsFor(UnitCategory.TORQUE)
+        val nm = units.first { it.id == "nm" }
+        val knm = units.first { it.id == "knm" }
+        val lbfft = units.first { it.id == "lbfft" }
+
+        assertEquals(1.0, UnitConverterEngine.convert(1000.0, nm, knm), 1e-6)
+        assertEquals(1.355818, UnitConverterEngine.convert(1.0, lbfft, nm), 1e-4)
+    }
+
+    @Test
+    fun `data storage conversions are accurate`() {
+        val units = UnitConverterEngine.unitsFor(UnitCategory.DATA)
+        val b = units.first { it.id == "b" }
+        val kb = units.first { it.id == "kb" }
+        val mb = units.first { it.id == "mb" }
+        val gb = units.first { it.id == "gb" }
+        val kib = units.first { it.id == "kib" }
+        val mib = units.first { it.id == "mib" }
+
+        assertEquals(1.0, UnitConverterEngine.convert(1000.0, b, kb), 1e-6)
+        assertEquals(1.0, UnitConverterEngine.convert(1000.0, kb, mb), 1e-6)
+        assertEquals(1024.0, UnitConverterEngine.convert(1.0, kib, b), 1e-6)
+        assertEquals(1024.0, UnitConverterEngine.convert(1.0, mib, kib), 1e-6)
+    }
+
+    @Test
+    fun `angle conversions are accurate`() {
+        val units = UnitConverterEngine.unitsFor(UnitCategory.ANGLE)
+        val deg = units.first { it.id == "deg" }
+        val rad = units.first { it.id == "rad" }
+        val rev = units.first { it.id == "rev" }
+
+        assertEquals(360.0, UnitConverterEngine.convert(1.0, rev, deg), 1e-6)
+        assertEquals(Math.PI, UnitConverterEngine.convert(180.0, deg, rad), 1e-5)
+    }
+
+    @Test
     fun `defaultUnitsFor returns non-null valid defaults for all categories`() {
         UnitCategory.entries.forEach { category ->
             val (from, to) = UnitConverterEngine.defaultUnitsFor(category)

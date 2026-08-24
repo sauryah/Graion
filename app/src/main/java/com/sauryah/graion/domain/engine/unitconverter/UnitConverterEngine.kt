@@ -11,7 +11,11 @@ enum class UnitCategory(val displayName: String) {
     TEMPERATURE("Temperature"),
     SPEED("Speed"),
     PRESSURE("Pressure"),
-    POWER("Power")
+    POWER("Power"),
+    FORCE("Force"),
+    TORQUE("Torque"),
+    DATA("Data"),
+    ANGLE("Angle")
 }
 
 data class UnitDefinition(
@@ -102,6 +106,43 @@ object UnitConverterEngine {
         UnitDefinition("btuh", "BTU/h", "BTU per hour", { it * 0.29307107 }, { it / 0.29307107 })
     )
 
+    private val forceUnits = listOf(
+        UnitDefinition("n", "N", "Newton", { it }, { it }),
+        UnitDefinition("kn", "kN", "Kilonewton", { it * 1000.0 }, { it / 1000.0 }),
+        UnitDefinition("lbf", "lbf", "Pound-force", { it * 4.4482216152605 }, { it / 4.4482216152605 }),
+        UnitDefinition("kgf", "kgf", "Kilogram-force", { it * 9.80665 }, { it / 9.80665 }),
+        UnitDefinition("dyn", "dyn", "Dyne", { it * 1e-5 }, { it / 1e-5 })
+    )
+
+    private val torqueUnits = listOf(
+        UnitDefinition("nm", "N·m", "Newton-metre", { it }, { it }),
+        UnitDefinition("knm", "kN·m", "Kilonewton-metre", { it * 1000.0 }, { it / 1000.0 }),
+        UnitDefinition("lbfft", "lbf·ft", "Pound-foot", { it * 1.3558179483314 }, { it / 1.3558179483314 }),
+        UnitDefinition("lbfin", "lbf·in", "Pound-inch", { it * 0.1129848290276167 }, { it / 0.1129848290276167 }),
+        UnitDefinition("kgfm", "kgf·m", "Kilogram-force metre", { it * 9.80665 }, { it / 9.80665 })
+    )
+
+    private val dataUnits = listOf(
+        UnitDefinition("b", "B", "Byte", { it }, { it }),
+        UnitDefinition("kb", "KB", "Kilobyte (Decimal)", { it * 1000.0 }, { it / 1000.0 }),
+        UnitDefinition("mb", "MB", "Megabyte (Decimal)", { it * 1_000_000.0 }, { it / 1_000_000.0 }),
+        UnitDefinition("gb", "GB", "Gigabyte (Decimal)", { it * 1_000_000_000.0 }, { it / 1_000_000_000.0 }),
+        UnitDefinition("tb", "TB", "Terabyte (Decimal)", { it * 1_000_000_000_000.0 }, { it / 1_000_000_000_000.0 }),
+        UnitDefinition("kib", "KiB", "Kibibyte (Binary)", { it * 1024.0 }, { it / 1024.0 }),
+        UnitDefinition("mib", "MiB", "Mebibyte (Binary)", { it * 1048576.0 }, { it / 1048576.0 }),
+        UnitDefinition("gib", "GiB", "Gibibyte (Binary)", { it * 1073741824.0 }, { it / 1073741824.0 }),
+        UnitDefinition("tib", "TiB", "Tebibyte (Binary)", { it * 1099511627776.0 }, { it / 1099511627776.0 })
+    )
+
+    private val angleUnits = listOf(
+        UnitDefinition("deg", "°", "Degree", { it }, { it }),
+        UnitDefinition("rad", "rad", "Radian", { it * 57.29577951308232 }, { it / 57.29577951308232 }),
+        UnitDefinition("grad", "grad", "Gradian", { it * 0.9 }, { it / 0.9 }),
+        UnitDefinition("arcmin", "arcmin", "Minute of arc", { it / 60.0 }, { it * 60.0 }),
+        UnitDefinition("arcsec", "arcsec", "Second of arc", { it / 3600.0 }, { it * 3600.0 }),
+        UnitDefinition("rev", "rev", "Revolution", { it * 360.0 }, { it / 360.0 })
+    )
+
     private val unitsByCategory: Map<UnitCategory, List<UnitDefinition>> = mapOf(
         UnitCategory.LENGTH to lengthUnits,
         UnitCategory.MASS to massUnits,
@@ -110,7 +151,11 @@ object UnitConverterEngine {
         UnitCategory.TEMPERATURE to temperatureUnits,
         UnitCategory.SPEED to speedUnits,
         UnitCategory.PRESSURE to pressureUnits,
-        UnitCategory.POWER to powerUnits
+        UnitCategory.POWER to powerUnits,
+        UnitCategory.FORCE to forceUnits,
+        UnitCategory.TORQUE to torqueUnits,
+        UnitCategory.DATA to dataUnits,
+        UnitCategory.ANGLE to angleUnits
     )
 
     fun unitsFor(category: UnitCategory): List<UnitDefinition> = unitsByCategory.getValue(category)
@@ -126,6 +171,10 @@ object UnitConverterEngine {
             UnitCategory.SPEED -> units.first { it.id == "mps" }
             UnitCategory.PRESSURE -> units.first { it.id == "bar" }
             UnitCategory.POWER -> units.first { it.id == "kw" }
+            UnitCategory.FORCE -> units.first { it.id == "kn" }
+            UnitCategory.TORQUE -> units.first { it.id == "nm" }
+            UnitCategory.DATA -> units.first { it.id == "gb" }
+            UnitCategory.ANGLE -> units.first { it.id == "deg" }
         }
         val to = when (category) {
             UnitCategory.LENGTH -> units.first { it.id == "km" }
@@ -136,6 +185,10 @@ object UnitConverterEngine {
             UnitCategory.SPEED -> units.first { it.id == "kmph" }
             UnitCategory.PRESSURE -> units.first { it.id == "psi" }
             UnitCategory.POWER -> units.first { it.id == "hp" }
+            UnitCategory.FORCE -> units.first { it.id == "lbf" }
+            UnitCategory.TORQUE -> units.first { it.id == "lbfft" }
+            UnitCategory.DATA -> units.first { it.id == "mb" }
+            UnitCategory.ANGLE -> units.first { it.id == "rad" }
         }
         return from to to
     }
