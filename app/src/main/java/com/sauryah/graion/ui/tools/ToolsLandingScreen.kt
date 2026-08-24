@@ -84,9 +84,9 @@ fun ToolsLandingScreen(
         ),
         EngineeringToolItem(
             id = "python-workbench",
-            title = "Python Workbench",
-            category = "SCRIPTING & MATH",
-            description = "Run Python scripts, engineering formulas, custom mathematical algorithms, and symbolic computations directly on-device.",
+            title = "Code & Script Studio",
+            category = "POLYGLOT SCRIPTING",
+            description = "Run Python 3, JavaScript (ES6), Lua, and Rust simulation kernels directly on-device with instant presets and execution telemetry.",
             icon = Icons.Default.Terminal,
             onOpen = onNavigateToPythonWorkbench
         )
