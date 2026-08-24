@@ -1,6 +1,7 @@
 package com.sauryah.graion.domain.engine.wiredrawing
 
 import com.sauryah.graion.domain.model.wiredrawing.ConsistencyResult
+import com.sauryah.graion.domain.model.wiredrawing.DieGeometryResult
 import com.sauryah.graion.domain.model.wiredrawing.PassResult
 import com.sauryah.graion.domain.model.wiredrawing.QualityRating
 import com.sauryah.graion.domain.model.wiredrawing.SuggestedIntermediatePass
@@ -446,6 +447,66 @@ object WireDrawingCalculatorEngine {
             weightKg = weightKg,
             linearMassGPerM = linearMassGPerM,
             materialName = material.displayName
+        )
+    }
+
+    /**
+     * Calculates the optimal die approach angle and recommended bearing length using the Avitzur formula:
+     * alpha_opt (rad) = sqrt(1.5 * mu * ln(1 / (1 - r)))
+     * 2 * alpha_opt (total approach angle)
+     * Delta parameter: Delta = (alpha_rad / r) * (1 + sqrt(1 - r))^2
+     */
+    fun calculateOptimalDieGeometry(
+        fromDie: Double,
+        toDie: Double,
+        frictionCoeff: Double = 0.05,
+        material: WireMaterial = WireMaterial.COPPER
+    ): DieGeometryResult {
+        if (fromDie <= 0.0 || toDie <= 0.0 || toDie >= fromDie) {
+            return DieGeometryResult(
+                optimalApproachAngleDeg = 14.0,
+                recommendedBearingLengthMm = roundTo3(toDie * 0.35),
+                bearingLengthRatioPercent = 35.0,
+                frictionCoefficient = frictionCoeff,
+                deltaParameter = 1.5,
+                deformationQuality = "Standard"
+            )
+        }
+
+        val areaRedFraction = (1.0 - (toDie * toDie) / (fromDie * fromDie)).coerceIn(0.01, 0.95)
+        val mu = frictionCoeff.coerceIn(0.01, 0.30)
+
+        // Semi-angle in radians
+        val alphaOptRad = sqrt(1.5 * mu * ln(1.0 / (1.0 - areaRedFraction)))
+        val totalApproachAngleDeg = roundTo3(Math.toDegrees(alphaOptRad * 2.0)).coerceIn(6.0, 30.0)
+
+        // Delta parameter
+        val delta = (alphaOptRad / areaRedFraction) * (1.0 + sqrt(1.0 - areaRedFraction)).pow(2.0)
+
+        // Recommended bearing length ratio based on material
+        val bearingRatioPercent = when (material) {
+            WireMaterial.COPPER, WireMaterial.ALUMINUM_EC, WireMaterial.ALUMINUM_ALLOY,
+            WireMaterial.GOLD, WireMaterial.SILVER -> 35.0
+            WireMaterial.BRASS_70_30, WireMaterial.BRONZE_PHOSPHOR -> 40.0
+            WireMaterial.CARBON_STEEL_HIGH, WireMaterial.STAINLESS_STEEL_304,
+            WireMaterial.NICKEL_200, WireMaterial.TITANIUM_GRADE_2 -> 50.0
+        }
+        val recommendedBearingLengthMm = roundTo3(toDie * (bearingRatioPercent / 100.0))
+
+        val deformationQuality = when {
+            delta < 1.5 -> "Homogeneous Deformation (Low Residual Stress)"
+            delta <= 2.5 -> "Acceptable Deformation (Standard)"
+            delta <= 3.5 -> "High Shear / Inhomogeneous Deformation"
+            else -> "Warning: Central Bursting Risk (High Delta > 3.5)"
+        }
+
+        return DieGeometryResult(
+            optimalApproachAngleDeg = totalApproachAngleDeg,
+            recommendedBearingLengthMm = recommendedBearingLengthMm,
+            bearingLengthRatioPercent = bearingRatioPercent,
+            frictionCoefficient = mu,
+            deltaParameter = roundTo3(delta),
+            deformationQuality = deformationQuality
         )
     }
 }

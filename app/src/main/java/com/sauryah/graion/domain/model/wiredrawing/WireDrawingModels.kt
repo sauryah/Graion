@@ -109,3 +109,14 @@ data class WireWeightLengthResult(
     val materialName: String
 )
 
+@Serializable
+data class DieGeometryResult(
+    val optimalApproachAngleDeg: Double,
+    val recommendedBearingLengthMm: Double,
+    val bearingLengthRatioPercent: Double,
+    val frictionCoefficient: Double,
+    val deltaParameter: Double,
+    val deformationQuality: String
+)
+
+

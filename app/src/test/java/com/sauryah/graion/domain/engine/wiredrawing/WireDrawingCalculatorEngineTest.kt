@@ -211,6 +211,20 @@ class WireDrawingCalculatorEngineTest {
     }
 
     @Test
+    fun testOptimalDieGeometryCalculations() {
+        // From 2.490 mm to 2.217 mm with standard friction mu = 0.05 on Copper
+        val geom = WireDrawingCalculatorEngine.calculateOptimalDieGeometry(2.490, 2.217, 0.05, WireMaterial.COPPER)
+        assertTrue(geom.optimalApproachAngleDeg in 10.0..20.0)
+        assertEquals(35.0, geom.bearingLengthRatioPercent, 0.1)
+        assertEquals(WireDrawingCalculatorEngine.roundTo3(2.217 * 0.35), geom.recommendedBearingLengthMm, 0.001)
+
+        // Steel die bearing ratio should be 50%
+        val steelGeom = WireDrawingCalculatorEngine.calculateOptimalDieGeometry(2.490, 2.217, 0.05, WireMaterial.CARBON_STEEL_HIGH)
+        assertEquals(50.0, steelGeom.bearingLengthRatioPercent, 0.1)
+        assertEquals(WireDrawingCalculatorEngine.roundTo3(2.217 * 0.50), steelGeom.recommendedBearingLengthMm, 0.001)
+    }
+
+    @Test
     fun testEmptySchedule() {
         val passes = WireDrawingCalculatorEngine.calculatePasses(emptyList())
         assertTrue(passes.isEmpty())
