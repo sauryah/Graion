@@ -205,13 +205,21 @@ fun PassTableSection(
                                 colors = colors
                             )
 
-                            // Elongation %
+                            // Elongation % with status color
+                            val elongColor = when {
+                                pass.elongationPercent > 32.0 -> Color(0xFFEF4444)
+                                pass.elongationPercent > 28.0 -> Color(0xFFF59E0B)
+                                pass.elongationPercent in 18.0..28.0 -> Color(0xFF10B981)
+                                pass.elongationPercent in 12.0..18.0 -> Color(0xFF38BDF8)
+                                else -> Color(0xFFEF4444)
+                            }
+
                             TableCell(
                                 text = String.format(Locale.US, "%.2f%%", pass.elongationPercent),
                                 width = 100.dp,
                                 isBold = true,
                                 colors = colors,
-                                textColor = if (pass.elongationPercent > 30.0) Color(0xFFEF4444) else colors.textPrimary
+                                textColor = elongColor
                             )
 
                             // Ratio
@@ -227,11 +235,14 @@ fun PassTableSection(
         }
     }
 
-    // Edit To-Die Dialog
+    // Edit To-Die Dialog with Validation
     if (editingPassIndex != null) {
         val passIdx = editingPassIndex!!
         val currentPass = passes.getOrNull(passIdx)
         if (currentPass != null) {
+            val parsedNum = editDieText.toDoubleOrNull()
+            val isInvalid = parsedNum == null || parsedNum <= 0.0 || parsedNum >= currentPass.fromDie
+
             AlertDialog(
                 onDismissRequest = { editingPassIndex = null },
                 title = {
@@ -254,6 +265,10 @@ fun PassTableSection(
                             onValueChange = { editDieText = it },
                             label = { Text("New Outlet Diameter (To mm)") },
                             singleLine = true,
+                            isError = editDieText.isNotEmpty() && isInvalid,
+                            supportingText = if (editDieText.isNotEmpty() && isInvalid) {
+                                { Text("Must be positive and less than ${String.format(Locale.US, "%.3f", currentPass.fromDie)} mm", color = colors.error) }
+                            } else null,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                             textStyle = TextStyle(fontFamily = FontFamily.Monospace, fontSize = 14.sp)
                         )
@@ -262,13 +277,13 @@ fun PassTableSection(
                 confirmButton = {
                     TextButton(
                         onClick = {
-                            val newNum = editDieText.toDoubleOrNull()
-                            if (newNum != null && newNum > 0.0) {
+                            if (!isInvalid && parsedNum != null) {
                                 // Pass index is (passIdx + 1) in the dies array
-                                onEditToDie(passIdx + 1, newNum)
+                                onEditToDie(passIdx + 1, parsedNum)
                                 editingPassIndex = null
                             }
-                        }
+                        },
+                        enabled = !isInvalid
                     ) {
                         Text("Update & Recalculate")
                     }
