@@ -27,6 +27,23 @@ private val DarkColorScheme = darkColorScheme(
     onError = Color.White
 )
 
+private val OledColorScheme = darkColorScheme(
+    primary = PrimaryViolet,
+    onPrimary = Color.White,
+    primaryContainer = Color(0xFF281E44),
+    onPrimaryContainer = DarkOperatorText,
+    secondary = LavenderAccent,
+    onSecondary = Color.Black,
+    background = Color.Black,
+    onBackground = DarkTextPrimary,
+    surface = Color(0xFF0A0C12),
+    onSurface = DarkTextPrimary,
+    surfaceVariant = Color(0xFF141824),
+    onSurfaceVariant = DarkTextSecondary,
+    error = DarkError,
+    onError = Color.White
+)
+
 private val LightColorScheme = lightColorScheme(
     primary = PrimaryViolet,
     onPrimary = Color.White,
@@ -59,11 +76,22 @@ fun GraionTheme(
     val isDark = when (themeMode) {
         ThemeMode.SYSTEM -> isSystemInDarkTheme()
         ThemeMode.LIGHT -> false
-        ThemeMode.DARK -> true
+        ThemeMode.DARK, ThemeMode.OLED_BLACK -> true
     }
 
-    val colorScheme = if (isDark) DarkColorScheme else LightColorScheme
-    val calculatorColors = if (isDark) DarkCalculatorColors else LightCalculatorColors
+    val colorScheme = when (themeMode) {
+        ThemeMode.SYSTEM -> if (isSystemInDarkTheme()) DarkColorScheme else LightColorScheme
+        ThemeMode.LIGHT -> LightColorScheme
+        ThemeMode.DARK -> DarkColorScheme
+        ThemeMode.OLED_BLACK -> OledColorScheme
+    }
+
+    val calculatorColors = when (themeMode) {
+        ThemeMode.SYSTEM -> if (isSystemInDarkTheme()) DarkCalculatorColors else LightCalculatorColors
+        ThemeMode.LIGHT -> LightCalculatorColors
+        ThemeMode.DARK -> DarkCalculatorColors
+        ThemeMode.OLED_BLACK -> OledBlackCalculatorColors
+    }
 
     CompositionLocalProvider(LocalCalculatorColors provides calculatorColors) {
         MaterialTheme(

@@ -174,6 +174,13 @@ fun SettingsScreen(
                         onClick = { onThemeChange(ThemeMode.DARK) }
                     )
                     ThemeOptionRow(
+                        title = "OLED Pure Black",
+                        subtitle = "Absolute #000000 black for AMOLED power saving",
+                        icon = Icons.Default.DarkMode,
+                        selected = preferences.themeMode == ThemeMode.OLED_BLACK,
+                        onClick = { onThemeChange(ThemeMode.OLED_BLACK) }
+                    )
+                    ThemeOptionRow(
                         title = "Light Theme",
                         subtitle = "Clean porcelain with royal violet",
                         icon = Icons.Default.LightMode,

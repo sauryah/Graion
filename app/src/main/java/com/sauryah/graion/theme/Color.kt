@@ -109,6 +109,27 @@ val LightCalculatorColors = CalculatorColors(
     isDark = false
 )
 
+val OledBlackCalculatorColors = CalculatorColors(
+    background = Color.Black,
+    surface = Color(0xFF0A0C12),
+    surfaceVariant = Color(0xFF141824),
+    displayBackground = Color.Black,
+    numberButton = Color(0xFF0F1118),
+    numberText = Color(0xFFF8FAFC),
+    functionButton = Color(0xFF1A1F2E),
+    functionText = Color(0xFFC7D2FE),
+    operatorButton = Color(0xFF281E44),
+    operatorText = Color(0xFFE0D4FC),
+    equalsButton = PrimaryViolet,
+    equalsText = Color.White,
+    textPrimary = Color(0xFFF8FAFC),
+    textSecondary = Color(0xFF94A3B8),
+    textPreview = Color(0xFF64748B),
+    error = DarkError,
+    isDark = true,
+    accentPrimary = PrimaryViolet
+)
+
 val LocalCalculatorColors = staticCompositionLocalOf {
     DarkCalculatorColors
 }
