@@ -60,6 +60,8 @@ import androidx.compose.ui.unit.sp
 import com.sauryah.graion.domain.engine.python.PythonEngine
 import com.sauryah.graion.theme.LocalCalculatorColors
 
+import androidx.compose.material3.CircularProgressIndicator
+
 private val samplePresets = listOf(
     "Wire Drawing" to """# Calculate Constant Elongation Die Passes
 d_in = 2.490
@@ -75,6 +77,32 @@ for i in range(1, passes + 1):
     elong = ((d/next_d)**2 - 1) * 100
     print(f"Pass {i:02d}: {d:.3f} mm -> {next_d:.3f} mm | Elong: {elong:.2f}%")
     d = next_d
+""",
+    "Drawing Force" to """# Wire Drawing Force & Power (Siebel Formula)
+import math
+
+d_in = 2.490   # mm
+d_out = 2.050  # mm
+yield_stress = 450.0  # MPa (N/mm^2)
+die_semi_angle_deg = 8.0  # degrees
+mu = 0.08  # friction coefficient
+drawing_speed = 12.0  # m/s
+
+alpha = math.radians(die_semi_angle_deg)
+area_in = math.pi * (d_in / 2)**2
+area_out = math.pi * (d_out / 2)**2
+reduction = (area_in - area_out) / area_in
+epsilon = math.log(area_in / area_out)
+
+# Siebel drawing stress formula: sigma_d = k_mean * (epsilon + (4/3)*alpha + mu*epsilon/alpha)
+sigma_draw = yield_stress * (epsilon + (4.0/3.0)*math.sin(alpha) + (mu/math.tan(alpha))*epsilon)
+draw_force_N = sigma_draw * area_out
+draw_power_kW = (draw_force_N * drawing_speed) / 1000.0
+
+print(f"Area Reduction: {reduction*100:.2f}%")
+print(f"Drawing Stress: {sigma_draw:.2f} MPa")
+print(f"Drawing Force:  {draw_force_N:.1f} N ({draw_force_N/9.80665:.1f} kgf)")
+print(f"Drawing Power:  {draw_power_kW:.2f} kW")
 """,
     "Math & Trig" to """import math
 
@@ -231,24 +259,40 @@ fun PythonWorkbenchScreen(
 
                     Button(
                         onClick = {
-                            isRunning = true
-                            output = PythonEngine.executeCode(code)
-                            isRunning = false
+                            if (!isRunning) {
+                                isRunning = true
+                                output = PythonEngine.executeCode(code)
+                                isRunning = false
+                            }
                         },
+                        enabled = !isRunning,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(44.dp),
                         shape = RoundedCornerShape(10.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = colors.accentPrimary)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.PlayArrow,
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.size(18.dp)
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colors.accentPrimary,
+                            disabledContainerColor = colors.accentPrimary.copy(alpha = 0.6f)
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("RUN SCRIPT", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = Color.White)
+                    ) {
+                        if (isRunning) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(18.dp),
+                                color = Color.White,
+                                strokeWidth = 2.dp
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("EXECUTING...", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = Color.White)
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.PlayArrow,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("RUN SCRIPT", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = Color.White)
+                        }
                     }
                 }
             }
