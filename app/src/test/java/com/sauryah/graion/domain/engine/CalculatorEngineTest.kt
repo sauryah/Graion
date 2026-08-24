@@ -388,6 +388,58 @@ class CalculatorEngineTest {
     }
 
     @Test
+    fun testFactorial() {
+        val result0 = engine.evaluate("0!")
+        assertTrue(result0 is EvaluationResult.Success)
+        assertEquals("1", (result0 as EvaluationResult.Success).formatted)
+
+        val result5 = engine.evaluate("5!")
+        assertTrue(result5 is EvaluationResult.Success)
+        assertEquals("120", (result5 as EvaluationResult.Success).formatted)
+
+        val resultComplex = engine.evaluate("3! + 4!")
+        assertTrue(resultComplex is EvaluationResult.Success)
+        assertEquals("30", (resultComplex as EvaluationResult.Success).formatted)
+    }
+
+    @Test
+    fun testCubeRoot() {
+        val result8 = engine.evaluate("8∛")
+        assertTrue(result8 is EvaluationResult.Success)
+        assertEquals("2", (result8 as EvaluationResult.Success).formatted)
+
+        val result27 = engine.evaluate("cbrt(27)")
+        assertTrue(result27 is EvaluationResult.Success)
+        assertEquals("3", (result27 as EvaluationResult.Success).formatted)
+    }
+
+    @Test
+    fun testAbsoluteValue() {
+        val resultNeg = engine.evaluate("abs(-25.5)")
+        assertTrue(resultNeg is EvaluationResult.Success)
+        assertEquals("25.5", (resultNeg as EvaluationResult.Success).formatted)
+
+        val resultPos = engine.evaluate("abs(10)")
+        assertTrue(resultPos is EvaluationResult.Success)
+        assertEquals("10", (resultPos as EvaluationResult.Success).formatted)
+    }
+
+    @Test
+    fun testInverseTrigonometry() {
+        val asin1 = engine.evaluate("asin(1)", AngleMode.DEGREES)
+        assertTrue(asin1 is EvaluationResult.Success)
+        assertEquals("90", (asin1 as EvaluationResult.Success).formatted)
+
+        val acos1 = engine.evaluate("acos(1)", AngleMode.DEGREES)
+        assertTrue(acos1 is EvaluationResult.Success)
+        assertEquals("0", (acos1 as EvaluationResult.Success).formatted)
+
+        val atan1 = engine.evaluate("atan(1)", AngleMode.DEGREES)
+        assertTrue(atan1 is EvaluationResult.Success)
+        assertEquals("45", (atan1 as EvaluationResult.Success).formatted)
+    }
+
+    @Test
     fun testPreviewEvaluation() {
         val preview = engine.evaluatePreview("2 + 3 *")
         assertTrue(preview is EvaluationResult.Success)

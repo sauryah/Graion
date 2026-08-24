@@ -116,6 +116,16 @@ class ExpressionTokenizer {
                     index++
                 }
 
+                char == '!' -> {
+                    rawTokens.add(Token(TokenType.FACTORIAL, "!"))
+                    index++
+                }
+
+                char == '∛' -> {
+                    rawTokens.add(Token(TokenType.CBRT, "∛"))
+                    index++
+                }
+
                 char == 'π' -> {
                     rawTokens.add(Token(TokenType.NUMBER, "π", BigDecimal("3.14159265358979323846264338327950288")))
                     index++
@@ -130,6 +140,11 @@ class ExpressionTokenizer {
                         "sin" -> rawTokens.add(Token(TokenType.SIN, "sin"))
                         "cos" -> rawTokens.add(Token(TokenType.COS, "cos"))
                         "tan" -> rawTokens.add(Token(TokenType.TAN, "tan"))
+                        "asin" -> rawTokens.add(Token(TokenType.ASIN, "asin"))
+                        "acos" -> rawTokens.add(Token(TokenType.ACOS, "acos"))
+                        "atan" -> rawTokens.add(Token(TokenType.ATAN, "atan"))
+                        "abs" -> rawTokens.add(Token(TokenType.ABS, "abs"))
+                        "cbrt" -> rawTokens.add(Token(TokenType.CBRT, "cbrt"))
                         "ln" -> rawTokens.add(Token(TokenType.LN, "ln"))
                         "log" -> rawTokens.add(Token(TokenType.LOG, "log"))
                         "e" -> rawTokens.add(Token(TokenType.NUMBER, "e", BigDecimal("2.71828182845904523536028747135266250")))
@@ -170,7 +185,9 @@ class ExpressionTokenizer {
                             (prev.type == TokenType.NUMBER && current.type == TokenType.NUMBER) ||
                             (prev.type == TokenType.NUMBER && current.type in FUNCTION_TYPES) ||
                             (prev.type == TokenType.PERCENT && current.type == TokenType.NUMBER) ||
-                            (prev.type == TokenType.PERCENT && current.type == TokenType.LEFT_PAREN)
+                            (prev.type == TokenType.PERCENT && current.type == TokenType.LEFT_PAREN) ||
+                            (prev.type == TokenType.FACTORIAL && current.type == TokenType.NUMBER) ||
+                            (prev.type == TokenType.FACTORIAL && current.type == TokenType.LEFT_PAREN)
 
                 if (needsImplicitMult) {
                     finalTokens.add(Token(TokenType.MULTIPLY, "*"))
@@ -183,6 +200,10 @@ class ExpressionTokenizer {
     }
 
     private companion object {
-        val FUNCTION_TYPES = setOf(TokenType.SIN, TokenType.COS, TokenType.TAN, TokenType.LN, TokenType.LOG)
+        val FUNCTION_TYPES = setOf(
+            TokenType.SIN, TokenType.COS, TokenType.TAN,
+            TokenType.ASIN, TokenType.ACOS, TokenType.ATAN,
+            TokenType.LN, TokenType.LOG, TokenType.ABS, TokenType.CBRT
+        )
     }
 }

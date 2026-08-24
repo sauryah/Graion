@@ -243,6 +243,36 @@ class CalculatorEngine(
                     stack.push(StackValue(sqrtVal, fromPercent = false))
                 }
 
+                TokenType.CBRT -> {
+                    if (stack.isEmpty()) return EvaluationResult.Error.MalformedExpression
+                    val top = stack.pop()
+                    val cbrtVal = BigDecimal.valueOf(kotlin.math.cbrt(top.value.toDouble()))
+                    stack.push(StackValue(cbrtVal, fromPercent = false))
+                }
+
+                TokenType.FACTORIAL -> {
+                    if (stack.isEmpty()) return EvaluationResult.Error.MalformedExpression
+                    val top = stack.pop()
+                    if (top.value.signum() < 0) return EvaluationResult.Error.Undefined
+                    val intVal = try {
+                        top.value.toBigIntegerExact()
+                    } catch (e: Exception) {
+                        return EvaluationResult.Error.Undefined
+                    }
+                    if (intVal > java.math.BigInteger.valueOf(500)) return EvaluationResult.Error.Undefined
+                    var fact = BigDecimal.ONE
+                    for (i in 2..intVal.toInt()) {
+                        fact = fact.multiply(BigDecimal(i), mathContext)
+                    }
+                    stack.push(StackValue(fact, fromPercent = false))
+                }
+
+                TokenType.ABS -> {
+                    if (stack.isEmpty()) return EvaluationResult.Error.MalformedExpression
+                    val top = stack.pop()
+                    stack.push(StackValue(top.value.abs(), fromPercent = false))
+                }
+
                 TokenType.POWER -> {
                     if (stack.size < 2) return EvaluationResult.Error.MalformedExpression
                     val b = stack.pop()
@@ -347,6 +377,41 @@ class CalculatorEngine(
                         val rad = if (angleMode == AngleMode.DEGREES) Math.toRadians(inputVal) else inputVal
                         val v = Math.tan(rad)
                         if (kotlin.math.abs(v) < 1e-14) 0.0 else v
+                    } ?: return EvaluationResult.Error.Undefined
+                    stack.push(StackValue(res, fromPercent = false))
+                }
+
+                TokenType.ASIN -> {
+                    if (stack.isEmpty()) return EvaluationResult.Error.MalformedExpression
+                    val top = stack.pop()
+                    val inputVal = top.value.toDouble()
+                    if (inputVal < -1.0 || inputVal > 1.0) return EvaluationResult.Error.Undefined
+                    val res = trigResult {
+                        val rad = Math.asin(inputVal)
+                        if (angleMode == AngleMode.DEGREES) Math.toDegrees(rad) else rad
+                    } ?: return EvaluationResult.Error.Undefined
+                    stack.push(StackValue(res, fromPercent = false))
+                }
+
+                TokenType.ACOS -> {
+                    if (stack.isEmpty()) return EvaluationResult.Error.MalformedExpression
+                    val top = stack.pop()
+                    val inputVal = top.value.toDouble()
+                    if (inputVal < -1.0 || inputVal > 1.0) return EvaluationResult.Error.Undefined
+                    val res = trigResult {
+                        val rad = Math.acos(inputVal)
+                        if (angleMode == AngleMode.DEGREES) Math.toDegrees(rad) else rad
+                    } ?: return EvaluationResult.Error.Undefined
+                    stack.push(StackValue(res, fromPercent = false))
+                }
+
+                TokenType.ATAN -> {
+                    if (stack.isEmpty()) return EvaluationResult.Error.MalformedExpression
+                    val top = stack.pop()
+                    val inputVal = top.value.toDouble()
+                    val res = trigResult {
+                        val rad = Math.atan(inputVal)
+                        if (angleMode == AngleMode.DEGREES) Math.toDegrees(rad) else rad
                     } ?: return EvaluationResult.Error.Undefined
                     stack.push(StackValue(res, fromPercent = false))
                 }

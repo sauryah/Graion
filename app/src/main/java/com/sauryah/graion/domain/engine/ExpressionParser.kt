@@ -24,13 +24,8 @@ class ExpressionParser {
                     output.add(token)
                 }
 
-                TokenType.PERCENT -> {
-                    // Postfix unary operator - highest precedence, outputs directly after operand
-                    output.add(token)
-                }
-
-                TokenType.SQRT -> {
-                    // Postfix unary operator - outputs directly after operand: 9√ -> sqrt(9)
+                TokenType.PERCENT, TokenType.SQRT, TokenType.FACTORIAL -> {
+                    // Postfix unary operators - output directly after operand: 5!, 9√, 50%
                     output.add(token)
                 }
 
@@ -70,7 +65,9 @@ class ExpressionParser {
                     operatorStack.push(token)
                 }
 
-                TokenType.SIN, TokenType.COS, TokenType.TAN, TokenType.LN, TokenType.LOG -> {
+                TokenType.SIN, TokenType.COS, TokenType.TAN,
+                TokenType.ASIN, TokenType.ACOS, TokenType.ATAN,
+                TokenType.LN, TokenType.LOG, TokenType.ABS, TokenType.CBRT -> {
                     // Prefix function: pushed like a unary operator, applied when its
                     // argument's closing paren is consumed.
                     operatorStack.push(token)
@@ -111,8 +108,10 @@ class ExpressionParser {
 
     private fun precedence(type: TokenType): Int {
         return when (type) {
-            TokenType.SIN, TokenType.COS, TokenType.TAN, TokenType.LN, TokenType.LOG -> 7
-            TokenType.SQRT -> 6
+            TokenType.SIN, TokenType.COS, TokenType.TAN,
+            TokenType.ASIN, TokenType.ACOS, TokenType.ATAN,
+            TokenType.LN, TokenType.LOG, TokenType.ABS, TokenType.CBRT -> 7
+            TokenType.SQRT, TokenType.FACTORIAL -> 6
             TokenType.POWER -> 5
             TokenType.PERCENT -> 4
             TokenType.UNARY_MINUS -> 6
@@ -131,6 +130,10 @@ class ExpressionParser {
     }
 
     private companion object {
-        val FUNCTION_TYPES = setOf(TokenType.SIN, TokenType.COS, TokenType.TAN, TokenType.LN, TokenType.LOG)
+        val FUNCTION_TYPES = setOf(
+            TokenType.SIN, TokenType.COS, TokenType.TAN,
+            TokenType.ASIN, TokenType.ACOS, TokenType.ATAN,
+            TokenType.LN, TokenType.LOG, TokenType.ABS, TokenType.CBRT
+        )
     }
 }
