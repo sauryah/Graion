@@ -307,6 +307,7 @@ private fun CategoryChips(
     ) {
         UnitCategory.entries.forEach { cat ->
             val isSelected = cat == selected
+            val unitCount = UnitConverterEngine.unitsFor(cat).size
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(20.dp))
@@ -317,11 +318,11 @@ private fun CategoryChips(
                     .clickable { onSelect(cat) }
                     .padding(horizontal = 14.dp, vertical = 8.dp)
                     .semantics {
-                        contentDescription = "${cat.displayName} category, ${if (isSelected) "selected" else "not selected"}"
+                        contentDescription = "${cat.displayName} category, $unitCount units, ${if (isSelected) "selected" else "not selected"}"
                     }
             ) {
                 Text(
-                    text = cat.displayName,
+                    text = "${cat.displayName} ($unitCount)",
                     fontSize = 12.sp,
                     fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                     color = if (isSelected) androidx.compose.ui.graphics.Color.White else colors.textSecondary
@@ -369,13 +370,21 @@ private fun UnitDropdown(
             containerColor = colors.surface
         ) {
             units.forEach { unit ->
+                val isCurrent = unit.id == selected.id
                 DropdownMenuItem(
                     text = {
-                        Text(
-                            text = "${unit.symbol} — ${unit.name}",
-                            color = colors.textPrimary,
-                            fontSize = 14.sp
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "${unit.symbol} — ${unit.name}",
+                                color = if (isCurrent) colors.accentPrimary else colors.textPrimary,
+                                fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Normal,
+                                fontSize = 14.sp
+                            )
+                        }
                     },
                     onClick = {
                         onSelect(unit)
