@@ -115,6 +115,47 @@ print(f"Vector: ({x}, {y})")
 print(f"Magnitude: {mag:.4f}")
 print(f"Angle: {deg:.2f}°")
 """,
+    "Flow Stress" to """# Work Hardening Flow Stress (Hollomon: sigma = K * epsilon^n)
+import math
+
+# Material Hollomon parameters
+materials = {
+    "Copper (ETP annealed)": {"K": 480.0, "n": 0.35, "sigma_0": 70.0},
+    "Aluminum 1100-O":       {"K": 180.0, "n": 0.20, "sigma_0": 35.0},
+    "Stainless Steel 304":   {"K": 1200.0, "n": 0.45, "sigma_0": 240.0},
+    "High Carbon Steel":     {"K": 1100.0, "n": 0.15, "sigma_0": 550.0}
+}
+
+d0 = 2.490  # mm inlet
+d1 = 0.500  # mm final
+
+true_strain = 2.0 * math.log(d0 / d1)
+print(f"Total True Strain: {true_strain:.3f}")
+print("=" * 45)
+
+for mat, params in materials.items():
+    sigma = params["sigma_0"] + params["K"] * (true_strain ** params["n"])
+    uts_approx = sigma * 1.08
+    print(f"{mat:22s} -> Flow Stress: {sigma:6.1f} MPa | Est UTS: {uts_approx:6.1f} MPa")
+""",
+    "Resistance & Drop" to """# Copper Wire Resistance & Voltage Drop at 20°C
+import math
+
+diameter_mm = 1.628  # 14 AWG
+length_m = 100.0     # metres
+current_A = 15.0     # Amperes
+rho_copper_20C = 0.017241  # ohm * mm^2 / m (IACS 100%)
+
+area_mm2 = math.pi * (diameter_mm / 2.0)**2
+resistance_20C = rho_copper_20C * (length_m / area_mm2)
+v_drop = current_A * (2 * resistance_20C)  # Loop (send + return)
+power_loss_W = (current_A ** 2) * (2 * resistance_20C)
+
+print(f"Wire Diameter: {diameter_mm:.3f} mm (Area: {area_mm2:.3f} mm²)")
+print(f"One-way Resistance: {resistance_20C:.4f} Ω")
+print(f"Loop Voltage Drop:  {v_drop:.2f} V ({v_drop/240.0*100:.2f}% on 240V)")
+print(f"I²R Power Loss:     {power_loss_W:.1f} Watts")
+""",
     "Fibonacci" to """# Fibonacci Series Generator
 def fib(n):
     a, b = 0, 1
