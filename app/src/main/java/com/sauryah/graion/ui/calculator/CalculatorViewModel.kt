@@ -393,10 +393,20 @@ class CalculatorViewModel(
 
     private fun handleFunction(function: CalculatorFunction) {
         _uiState.update { current ->
-            val expr = if (current.isCalculated || current.isError || current.expression == "0") {
-                "${function.symbol}("
+            val expr = if (function == CalculatorFunction.FACTORIAL) {
+                val base = if (current.isCalculated && current.result.isNotEmpty()) current.result else current.expression
+                val lastChar = base.lastOrNull()
+                if (lastChar != null && (lastChar.isDigit() || lastChar == ')' || lastChar == '%')) {
+                    "$base!"
+                } else {
+                    base
+                }
             } else {
-                "${current.expression}${function.symbol}("
+                if (current.isCalculated || current.isError || current.expression == "0") {
+                    "${function.symbol}("
+                } else {
+                    "${current.expression}${function.symbol}("
+                }
             }
             val preview = evaluateLivePreview(expr)
             current.copy(

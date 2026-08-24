@@ -30,6 +30,12 @@ enum class CalculatorFunction(val symbol: String, val displayName: String) {
     SIN("sin", "sin"),
     COS("cos", "cos"),
     TAN("tan", "tan"),
+    ASIN("asin", "asin"),
+    ACOS("acos", "acos"),
+    ATAN("atan", "atan"),
+    ABS("abs", "abs"),
+    CBRT("cbrt", "∛"),
+    FACTORIAL("!", "!"),
     LN("ln", "ln"),
     LOG("log", "log")
 }

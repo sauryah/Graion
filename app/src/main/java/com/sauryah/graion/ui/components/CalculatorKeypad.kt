@@ -33,7 +33,7 @@ fun CalculatorKeypad(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        // Row -1: Scientific keys (Page 0: sin cos tan ln | Page 1: π e ^ √ | Page 2: log ln ^ √)
+        // Row -1: Scientific keys (4-Page cyclic navigation)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -90,6 +90,53 @@ fun CalculatorKeypad(
 
                 1 -> {
                     CalculatorButton(
+                        symbol = "asin",
+                        type = CalculatorButtonType.FUNCTION,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize(),
+                        contentDesc = "Arc Sine",
+                        hapticsEnabled = hapticsEnabled,
+                        soundEnabled = soundEnabled,
+                        onClick = { onAction(CalculatorAction.Function(CalculatorFunction.ASIN)) }
+                    )
+                    CalculatorButton(
+                        symbol = "acos",
+                        type = CalculatorButtonType.FUNCTION,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize(),
+                        contentDesc = "Arc Cosine",
+                        hapticsEnabled = hapticsEnabled,
+                        soundEnabled = soundEnabled,
+                        onClick = { onAction(CalculatorAction.Function(CalculatorFunction.ACOS)) }
+                    )
+                    CalculatorButton(
+                        symbol = "atan",
+                        type = CalculatorButtonType.FUNCTION,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize(),
+                        contentDesc = "Arc Tangent",
+                        hapticsEnabled = hapticsEnabled,
+                        soundEnabled = soundEnabled,
+                        onClick = { onAction(CalculatorAction.Function(CalculatorFunction.ATAN)) }
+                    )
+                    CalculatorButton(
+                        symbol = "!",
+                        type = CalculatorButtonType.FUNCTION,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize(),
+                        contentDesc = "Factorial",
+                        hapticsEnabled = hapticsEnabled,
+                        soundEnabled = soundEnabled,
+                        onClick = { onAction(CalculatorAction.Function(CalculatorFunction.FACTORIAL)) }
+                    )
+                }
+
+                2 -> {
+                    CalculatorButton(
                         symbol = "π",
                         type = CalculatorButtonType.FUNCTION,
                         modifier = Modifier
@@ -112,17 +159,6 @@ fun CalculatorKeypad(
                         onClick = { onAction(CalculatorAction.Constant(CalculatorConstant.EULER)) }
                     )
                     CalculatorButton(
-                        symbol = "^",
-                        type = CalculatorButtonType.OPERATOR,
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize(),
-                        contentDesc = "Power",
-                        hapticsEnabled = hapticsEnabled,
-                        soundEnabled = soundEnabled,
-                        onClick = { onAction(CalculatorAction.Operator(CalculatorOperator.POWER)) }
-                    )
-                    CalculatorButton(
                         symbol = "√",
                         type = CalculatorButtonType.FUNCTION,
                         modifier = Modifier
@@ -132,6 +168,17 @@ fun CalculatorKeypad(
                         hapticsEnabled = hapticsEnabled,
                         soundEnabled = soundEnabled,
                         onClick = { onAction(CalculatorAction.SquareRoot) }
+                    )
+                    CalculatorButton(
+                        symbol = "∛",
+                        type = CalculatorButtonType.FUNCTION,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize(),
+                        contentDesc = "Cube Root",
+                        hapticsEnabled = hapticsEnabled,
+                        soundEnabled = soundEnabled,
+                        onClick = { onAction(CalculatorAction.Function(CalculatorFunction.CBRT)) }
                     )
                 }
 
@@ -148,15 +195,15 @@ fun CalculatorKeypad(
                         onClick = { onAction(CalculatorAction.Function(CalculatorFunction.LOG)) }
                     )
                     CalculatorButton(
-                        symbol = "ln",
+                        symbol = "abs",
                         type = CalculatorButtonType.FUNCTION,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxSize(),
-                        contentDesc = "Natural Logarithm",
+                        contentDesc = "Absolute Value",
                         hapticsEnabled = hapticsEnabled,
                         soundEnabled = soundEnabled,
-                        onClick = { onAction(CalculatorAction.Function(CalculatorFunction.LN)) }
+                        onClick = { onAction(CalculatorAction.Function(CalculatorFunction.ABS)) }
                     )
                     CalculatorButton(
                         symbol = "^",
@@ -170,15 +217,15 @@ fun CalculatorKeypad(
                         onClick = { onAction(CalculatorAction.Operator(CalculatorOperator.POWER)) }
                     )
                     CalculatorButton(
-                        symbol = "√",
+                        symbol = "%",
                         type = CalculatorButtonType.FUNCTION,
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxSize(),
-                        contentDesc = "Square Root",
+                        contentDesc = "Percentage",
                         hapticsEnabled = hapticsEnabled,
                         soundEnabled = soundEnabled,
-                        onClick = { onAction(CalculatorAction.SquareRoot) }
+                        onClick = { onAction(CalculatorAction.Percentage) }
                     )
                 }
             }
@@ -189,10 +236,10 @@ fun CalculatorKeypad(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxSize(),
-                contentDesc = "Switch scientific function page (Page ${functionPage + 1} of 3)",
+                contentDesc = "Switch scientific function page (Page ${functionPage + 1} of 4)",
                 hapticsEnabled = hapticsEnabled,
                 soundEnabled = soundEnabled,
-                onClick = { functionPage = (functionPage + 1) % 3 }
+                onClick = { functionPage = (functionPage + 1) % 4 }
             )
         }
 
