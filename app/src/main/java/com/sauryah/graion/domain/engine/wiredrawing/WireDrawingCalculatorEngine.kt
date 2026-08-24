@@ -2,6 +2,8 @@ package com.sauryah.graion.domain.engine.wiredrawing
 
 import com.sauryah.graion.domain.model.wiredrawing.ConsistencyResult
 import com.sauryah.graion.domain.model.wiredrawing.DieGeometryResult
+import com.sauryah.graion.domain.model.wiredrawing.MachineKinematicsPass
+import com.sauryah.graion.domain.model.wiredrawing.MachineKinematicsResult
 import com.sauryah.graion.domain.model.wiredrawing.PassResult
 import com.sauryah.graion.domain.model.wiredrawing.QualityRating
 import com.sauryah.graion.domain.model.wiredrawing.SuggestedIntermediatePass
@@ -507,6 +509,61 @@ object WireDrawingCalculatorEngine {
             frictionCoefficient = mu,
             deltaParameter = roundTo3(delta),
             deformationQuality = deformationQuality
+        )
+    }
+
+    /**
+     * Calculates line speeds per pass and production throughput based on mass conservation:
+     * v_i = v_finish * (A_finish / A_i) = v_finish * (d_finish / d_i)^2
+     * Production Rate (kg/hr) = v_finish (m/s) * linearMass (g/m) * 3.6
+     */
+    fun calculateMachineKinematics(
+        passes: List<PassResult>,
+        finishSpeedMPerS: Double,
+        material: WireMaterial = WireMaterial.COPPER
+    ): MachineKinematicsResult {
+        if (passes.isEmpty() || finishSpeedMPerS <= 0.0) {
+            return MachineKinematicsResult(
+                finishSpeedMPerS = finishSpeedMPerS,
+                inletSpeedMPerS = 0.0,
+                productionRateKgPerHour = 0.0,
+                productionRateTonnesPer8HrShift = 0.0,
+                passSpeeds = emptyList()
+            )
+        }
+
+        val finishPass = passes.last()
+        val finalDiameter = finishPass.toDie
+        val inletDiameter = passes.first().fromDie
+
+        val linearMassGPerM = calculateLinearMassGramsPerMetre(finalDiameter, material)
+        // 1 m/s * 1 g/m = 1 g/s = 3.6 kg/hr
+        val prodRateKgPerHr = roundTo3(finishSpeedMPerS * linearMassGPerM * 3.6)
+        val prodRateTonnes8Hr = roundTo3((prodRateKgPerHr * 8.0) / 1000.0)
+
+        val passSpeeds = passes.map { pass ->
+            val speedMPerS = finishSpeedMPerS * ((finalDiameter * finalDiameter) / (pass.toDie * pass.toDie))
+            val speedMPerMin = speedMPerS * 60.0
+            val inletSpeed = finishSpeedMPerS * ((finalDiameter * finalDiameter) / (inletDiameter * inletDiameter))
+            val speedRatioToInlet = if (inletSpeed > 0.0) speedMPerS / inletSpeed else 1.0
+
+            MachineKinematicsPass(
+                passNumber = pass.passNumber,
+                dieDiameterMm = pass.toDie,
+                wireSpeedMPerS = roundTo3(speedMPerS),
+                wireSpeedMPerMin = roundTo3(speedMPerMin),
+                speedRatioToInlet = roundTo3(speedRatioToInlet)
+            )
+        }
+
+        val inletSpeed = finishSpeedMPerS * ((finalDiameter * finalDiameter) / (inletDiameter * inletDiameter))
+
+        return MachineKinematicsResult(
+            finishSpeedMPerS = roundTo3(finishSpeedMPerS),
+            inletSpeedMPerS = roundTo3(inletSpeed),
+            productionRateKgPerHour = prodRateKgPerHr,
+            productionRateTonnesPer8HrShift = prodRateTonnes8Hr,
+            passSpeeds = passSpeeds
         )
     }
 }

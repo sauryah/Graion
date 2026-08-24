@@ -225,6 +225,23 @@ class WireDrawingCalculatorEngineTest {
     }
 
     @Test
+    fun testMachineKinematics() {
+        val dies = listOf(2.490, 2.217, 1.974)
+        val passes = WireDrawingCalculatorEngine.calculatePasses(dies)
+        val finishSpeed = 10.0 // 10 m/s finish wire speed
+
+        val kinematics = WireDrawingCalculatorEngine.calculateMachineKinematics(passes, finishSpeed, WireMaterial.COPPER)
+        assertEquals(10.0, kinematics.finishSpeedMPerS, 0.001)
+        assertTrue(kinematics.inletSpeedMPerS < kinematics.finishSpeedMPerS)
+        assertTrue(kinematics.productionRateKgPerHour > 0.0)
+        assertEquals(2, kinematics.passSpeeds.size)
+        // Last pass wire speed should match finish speed
+        assertEquals(10.0, kinematics.passSpeeds.last().wireSpeedMPerS, 0.001)
+        // Pass 1 wire speed should be lower than finish speed
+        assertTrue(kinematics.passSpeeds.first().wireSpeedMPerS < 10.0)
+    }
+
+    @Test
     fun testEmptySchedule() {
         val passes = WireDrawingCalculatorEngine.calculatePasses(emptyList())
         assertTrue(passes.isEmpty())

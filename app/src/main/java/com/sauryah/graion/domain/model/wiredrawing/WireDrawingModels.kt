@@ -119,4 +119,23 @@ data class DieGeometryResult(
     val deformationQuality: String
 )
 
+@Serializable
+data class MachineKinematicsPass(
+    val passNumber: Int,
+    val dieDiameterMm: Double,
+    val wireSpeedMPerS: Double,
+    val wireSpeedMPerMin: Double,
+    val speedRatioToInlet: Double
+)
+
+@Serializable
+data class MachineKinematicsResult(
+    val finishSpeedMPerS: Double,
+    val inletSpeedMPerS: Double,
+    val productionRateKgPerHour: Double,
+    val productionRateTonnesPer8HrShift: Double,
+    val passSpeeds: List<MachineKinematicsPass>
+)
+
+
 
